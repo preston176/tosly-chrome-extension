@@ -1,0 +1,15 @@
+# env files
+.env
+backend/.env
+
+# Go binaries
+*.out
+/tmp/
+
+# Plasmo / Node
+node_modules/
+extension/.plasmo/
+extension/build/
+
+# OS
+.DS_Store
