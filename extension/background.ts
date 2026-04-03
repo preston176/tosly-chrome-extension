@@ -53,6 +53,12 @@ function sendToTab(tabId: number, message: unknown): void {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, _sendResponse) => {
+  if (message.type === "SCROLL_TO_HIGHLIGHT") {
+    const tabId = sender.tab?.id
+    if (tabId) sendToTab(tabId, { type: "SCROLL_TO_HIGHLIGHT", index: message.index ?? 0 })
+    return
+  }
+
   if (message.type === "ANALYZE") {
     const { url, text } = message.payload
     const domain = extractDomain(url)
@@ -69,7 +75,7 @@ chrome.runtime.onMessage.addListener((message, sender, _sendResponse) => {
           await setCached(domain, result)
         }
 
-        if (tabId) sendToTab(tabId, { type: "RESULT", payload: result })
+        if (tabId) sendToTab(tabId, { type: "RESULT", payload: result, url })
       } catch (err) {
         console.error("[Tosly] Analysis failed:", err)
         if (tabId) sendToTab(tabId, { type: "ERROR", payload: { message: "Analysis failed. Please try again." } })

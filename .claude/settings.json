@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go get:*)",
+      "Bash(go test:*)",
+      "Bash(go build:*)",
+      "Bash(curl -s https://www.spotify.com/us/legal/privacy-policy/)",
+      "Bash(pkill -f \"go run main.go\")",
+      "Bash(pkill -f \"tosly/backend\")",
+      "Bash(lsof -ti:8080)",
+      "Bash(python3 -)",
+      "Bash(xargs kill:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npx plasmo:*)",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s http://localhost:8080/health)",
+      "Bash(python3 -c \"import json,sys; m=json.load\\(sys.stdin\\); print\\(json.dumps\\(m['content_scripts'], indent=2\\)\\)\")",
+      "Bash(ls -la /Users/app/Code/personal/tosly-chrome-extension/extension/build/chrome-mv3-prod/content*.js)",
+      "Bash(grep -o \"applyHighlights\\\\|highlightQuote\\\\|getTextNodes\\\\|createTreeWalker\\\\|SHOW_TEXT\" /Users/app/Code/personal/tosly-chrome-extension/extension/build/chrome-mv3-prod/content.*.js)",
+      "Bash(python3 -c ':*)",
+      "Bash(curl -s -X POST http://localhost:8080/analyze -H 'Content-Type: application/json' -d '{\"url\":\"https://example.com/terms\",\"text\":\"We may sell your personal data to third party advertisers for profit. You agree to mandatory arbitration and waive your right to a jury trial. The subscription automatically renews each year without notice.\"}')",
+      "Bash(pkill -f tosly-backend)",
+      "Bash(/tmp/tosly-backend)"
+    ]
+  }
+}

@@ -15,6 +15,7 @@ type Flag struct {
 	Category    string `json:"category"`
 	Severity    string `json:"severity"`
 	Explanation string `json:"explanation"`
+	Quote       string `json:"quote"`
 }
 
 // AnalysisResult is the full response from the LLM analysis.
@@ -56,12 +57,14 @@ Return ONLY valid JSON in this exact format, no markdown, no code fences:
     {
       "category": "one of the 6 categories above",
       "severity": "red|yellow|green",
-      "explanation": "one sentence, plain English, max 20 words"
+      "explanation": "one sentence, plain English, max 20 words",
+      "quote": "the exact verbatim sentence or clause from the text that triggered this flag, max 200 chars"
     }
   ]
 }
 
 If no issues are found, return severity "green", summary "This policy looks standard.", and an empty flags array.
+For the quote field, copy the text verbatim — do not paraphrase. If no single sentence captures it, use the most relevant clause.
 
 TEXT TO ANALYZE:
 %s`

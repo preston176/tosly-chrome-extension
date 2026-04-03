@@ -35,7 +35,7 @@
   "manifest": {
     "host_permissions": [
       "https://*/*",
-      "http://*/*"
+      "http://localhost:8080/*"
     ],
     "permissions": [
       "storage",

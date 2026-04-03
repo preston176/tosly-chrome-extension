@@ -4,6 +4,7 @@ export interface Flag {
   category: string
   severity: Severity
   explanation: string
+  quote?: string
 }
 
 export interface AnalysisResult {

@@ -1,10 +1,13 @@
 import cssText from "data-text:~/styles/shield.css"
+import { Storage } from "@plasmohq/storage"
 import type { PlasmoCSConfig, PlasmoGetShadowHostId } from "plasmo"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import type { AnalysisResult, ShieldState } from "~types"
 
 import ResultPanel from "~components/result-panel"
+
+const storage = new Storage({ area: "local" })
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"]
@@ -32,6 +35,25 @@ const STATE_LABEL: Record<ShieldState, string> = {
   red: "HIGH RISK",
   yellow: "CAUTION",
   green: "CLEAR"
+}
+
+const POS_KEY = "tosly-widget-pos"
+const DEFAULT_POS = { x: window.innerWidth - 80, y: window.innerHeight - 100 }
+
+function clampPos(pos: { x: number; y: number }): { x: number; y: number } {
+  return {
+    x: Math.min(Math.max(0, pos.x), window.innerWidth - 72),
+    y: Math.min(Math.max(0, pos.y), window.innerHeight - 80)
+  }
+}
+
+async function loadPos(): Promise<{ x: number; y: number }> {
+  const saved = await storage.get<{ x: number; y: number }>(POS_KEY)
+  return saved ? clampPos(saved) : DEFAULT_POS
+}
+
+function savePos(pos: { x: number; y: number }) {
+  storage.set(POS_KEY, pos).catch(() => {})
 }
 
 function ShieldIcon({ state }: { state: ShieldState }) {
@@ -73,12 +95,7 @@ function ShieldIcon({ state }: { state: ShieldState }) {
         </>
       )}
       {state === "yellow" && (
-        <path
-          d="M16 12L16 22M16 25V25.5"
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <path d="M16 12L16 22M16 25V25.5" stroke={color} strokeWidth="2" strokeLinecap="round" />
       )}
       {state === "green" && (
         <path
@@ -98,12 +115,23 @@ export default function ShieldUI() {
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
   const [visible, setVisible] = useState(false)
-  const labelTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [pos, setPos] = useState<{ x: number; y: number }>(DEFAULT_POS)
+
+  // Drag state — all in a ref so pointer handlers don't need re-binding
+  const dragRef = useRef({
+    dragging: false,
+    startPointerX: 0,
+    startPointerY: 0,
+    startElemX: 0,
+    startElemY: 0,
+    moved: false
+  })
 
   useEffect(() => {
-    // Small delay before showing to avoid flash on every page
-    const t = setTimeout(() => setVisible(true), 800)
-    return () => clearTimeout(t)
+    loadPos().then((p) => {
+      setPos(p)
+      setVisible(true)
+    })
   }, [])
 
   useEffect(() => {
@@ -113,10 +141,10 @@ export default function ShieldUI() {
         setResult(null)
         setPanelOpen(false)
       } else if (message.type === "RESULT") {
+        if (message.url && message.url !== window.location.href) return
         const r: AnalysisResult = message.payload
         setState(r.severity)
         setResult(r)
-        // Auto-open panel for red and yellow
         if (r.severity === "red" || r.severity === "yellow") {
           setTimeout(() => setPanelOpen(true), 400)
         }
@@ -126,35 +154,95 @@ export default function ShieldUI() {
         setState("idle")
       }
     }
-
     chrome.runtime.onMessage.addListener(handler)
     return () => chrome.runtime.onMessage.removeListener(handler)
   }, [])
 
-  const handleClick = () => {
+  const onPointerDown = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+    // Only primary button
+    if (e.button !== 0) return
+    const d = dragRef.current
+    d.dragging = true
+    d.moved = false
+    d.startPointerX = e.clientX
+    d.startPointerY = e.clientY
+    d.startElemX = pos.x
+    d.startElemY = pos.y
+    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+  }, [pos])
+
+  const onPointerMove = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+    const d = dragRef.current
+    if (!d.dragging) return
+
+    const dx = e.clientX - d.startPointerX
+    const dy = e.clientY - d.startPointerY
+
+    // Only start moving after 4px threshold to preserve click intent
+    if (!d.moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return
+    d.moved = true
+
+    const newX = Math.min(Math.max(0, d.startElemX + dx), window.innerWidth - 72)
+    const newY = Math.min(Math.max(0, d.startElemY + dy), window.innerHeight - 80)
+
+    setPos({ x: newX, y: newY })
+  }, [])
+
+  const onPointerUp = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+    const d = dragRef.current
+    if (!d.dragging) return
+    d.dragging = false
+    ;(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId)
+
+    if (d.moved) {
+      // Save final position and suppress the click
+      savePos(pos)
+    }
+  }, [pos])
+
+  const handleClick = useCallback(() => {
+    // Suppress click if this was a drag
+    if (dragRef.current.moved) {
+      dragRef.current.moved = false
+      return
+    }
     if (state === "idle") {
-      // Manual trigger
       chrome.runtime.sendMessage({ type: "MANUAL_SCAN" })
     } else if (result) {
-      setPanelOpen((prev) => !prev)
+      const next = !panelOpen
+      setPanelOpen(next)
+      if (!next) chrome.runtime.sendMessage({ type: "CLEAR_HIGHLIGHTS" })
     }
-  }
+  }, [state, result, panelOpen])
 
   if (!visible) return null
 
+  // Panel opens above or below depending on vertical position
+  const panelAbove = pos.y > window.innerHeight / 2
+
   return (
-    <div className="tosly-root">
+    <div
+      className="tosly-root"
+      style={{ position: "fixed", left: pos.x, top: pos.y, zIndex: 2147483647, isolation: "isolate" }}>
       {panelOpen && result && (
         <ResultPanel
           result={result}
-          onDismiss={() => setPanelOpen(false)}
+          anchorAbove={panelAbove}
+          onDismiss={() => {
+            setPanelOpen(false)
+            chrome.runtime.sendMessage({ type: "CLEAR_HIGHLIGHTS" })
+          }}
         />
       )}
       <button
         className={`tosly-shield-btn ${state}`}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
         onClick={handleClick}
         title={`Tosly — ${STATE_LABEL[state]}`}
-        aria-label={`Tosly: ${STATE_LABEL[state]}`}>
+        aria-label={`Tosly: ${STATE_LABEL[state]}`}
+        style={{ cursor: dragRef.current.dragging ? "grabbing" : "grab" }}>
         <ShieldIcon state={state} />
         <span className="tosly-label">{STATE_LABEL[state]}</span>
       </button>
