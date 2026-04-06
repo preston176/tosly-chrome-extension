@@ -1,97 +1,82 @@
-# Tosly Backend — VPS Deploy Plan (Coolify)
+# Tosly Backend — Deploy Plan (Fly.io)
 
 ## Pre-flight answers
 
 | Question | Your answer |
 |---|---|
-| VPS IP address | <!-- fill in --> |
-| Domain / subdomain for API | <!-- e.g. api.tosly.app --> |
-| VPS provider | <!-- e.g. Hetzner, DigitalOcean, Vultr --> |
-| VPS OS | Ubuntu 22.04 LTS |
-| VPS RAM | <!-- e.g. 2GB --> |
+| Fly.io app name | tosly-backend (or pick another) |
+| Closest region | <!-- lhr=London, iad=US East, ord=US Central, sin=Singapore, syd=Sydney --> |
+| Custom domain | <!-- e.g. api.tosly.app (optional) --> |
 
 ---
 
-## Why Coolify
-
-- One-click Docker deploys from GitHub
-- Automatic HTTPS via Let's Encrypt (no nginx config needed)
-- Environment variable management in the UI
-- Health check monitoring + auto-restart
-- Free and self-hosted on your own VPS
-
----
-
-## Step 1 — Install Coolify on VPS (one-time)
-
-SSH into your VPS then run:
+## Step 1 — Install flyctl
 
 ```bash
-curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+brew install flyctl
 ```
 
-Coolify installs Docker, sets up its own reverse proxy (Traefik), and starts on port **8000**.
-
-Access the UI at: `http://<YOUR_VPS_IP>:8000`
-
-Create your admin account on first visit.
-
----
-
-## Step 2 — Point your domain
-
-Add a DNS A record:
-
-```
-api.tosly.app  →  <YOUR_VPS_IP>
+Or via the official installer:
+```bash
+curl -L https://fly.io/install.sh | sh
 ```
 
-Wait for propagation (usually < 5 min on Cloudflare).
+---
+
+## Step 2 — Sign up / log in
+
+```bash
+fly auth signup   # new account
+# or
+fly auth login    # existing account
+```
+
+No credit card required for the free tier.
 
 ---
 
-## Step 3 — Connect GitHub to Coolify
+## Step 3 — Launch the app
 
-In Coolify UI:
-1. **Sources** → Add GitHub App → follow OAuth flow
-2. Grant access to `tosly-chrome-extension` repo
+From the `backend/` directory:
 
----
+```bash
+cd backend
+fly launch --name tosly-backend --region lhr --no-deploy
+```
 
-## Step 4 — Create the service in Coolify
-
-1. **New Resource** → **Application** → **GitHub**
-2. Select repo: `tosly-chrome-extension`
-3. Select branch: `deploy/backend`
-4. Build pack: **Dockerfile**
-5. Dockerfile path: `backend/Dockerfile`
-6. Port: `8080`
-7. Domain: `api.tosly.app` — Coolify handles TLS automatically
+- `--no-deploy` so we set secrets before first deploy
+- It will detect the `Dockerfile` and `fly.toml` automatically
+- Say **No** when asked to overwrite `fly.toml`
 
 ---
 
-## Step 5 — Set environment variables
+## Step 4 — Set secrets
 
-In the service **Environment Variables** tab:
+```bash
+fly secrets set GEMINI_API_KEY=your_key_here
+```
 
-| Key | Value |
-|---|---|
-| `GEMINI_API_KEY` | your Gemini API key |
-
-Never commit this to git — set it only in the Coolify UI.
+Never committed to git — stored encrypted in Fly.io.
 
 ---
 
-## Step 6 — Deploy
+## Step 5 — Deploy
 
-Click **Deploy**. Coolify will:
-1. Clone the repo
-2. Build the Docker image from `backend/Dockerfile`
-3. Start the container
-4. Issue TLS cert for your domain
-5. Route `https://api.tosly.app` → container port 8080
+```bash
+fly deploy
+```
 
-Health check: `https://api.tosly.app/health` should return `ok`.
+Fly builds the Docker image remotely, deploys to your chosen region, and gives you a URL like:
+`https://tosly-backend.fly.dev`
+
+---
+
+## Step 6 — Verify
+
+```bash
+curl https://tosly-backend.fly.dev/health
+# should return: ok
+```
 
 ---
 
@@ -100,33 +85,83 @@ Health check: `https://api.tosly.app/health` should return `ok`.
 Create `extension/.env.production`:
 
 ```env
-PLASMO_PUBLIC_BACKEND_URL=https://api.tosly.app
+PLASMO_PUBLIC_BACKEND_URL=https://tosly-backend.fly.dev
 ```
 
-Then `plasmo build` will bake in the production URL.
+Then `plasmo build` bakes in the production URL.
 
 ---
 
-## Auto-deploy on push (optional)
+## Custom domain (optional)
 
-In Coolify service settings → **Webhooks** → copy the deploy webhook URL.
+```bash
+fly certs add api.tosly.app
+```
 
-In GitHub repo → **Settings → Webhooks** → add the URL.
+Then add a CNAME record in your DNS:
+```
+api.tosly.app  →  tosly-backend.fly.dev
+```
 
-Now every push to `deploy/backend` triggers a redeploy automatically.
+Fly handles TLS automatically.
+
+---
+
+## Subsequent deploys
+
+Any time you push changes to the backend:
+
+```bash
+cd backend
+fly deploy
+```
+
+Or set up GitHub Actions for auto-deploy on push (see below).
+
+---
+
+## GitHub Actions auto-deploy (optional)
+
+Get your Fly API token:
+```bash
+fly tokens create deploy
+```
+
+Add it to GitHub repo → **Settings → Secrets** → `FLY_API_TOKEN`
+
+Create `.github/workflows/deploy-backend.yml`:
+
+```yaml
+name: Deploy Backend
+
+on:
+  push:
+    branches: [deploy/backend]
+    paths: [backend/**]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: fly deploy --remote-only
+        working-directory: backend
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+```
 
 ---
 
 ## Checklist
 
 - [ ] Fill in pre-flight answers above
-- [ ] VPS provisioned (Ubuntu 22.04, min 1GB RAM)
-- [ ] Coolify installed on VPS
-- [ ] DNS A record pointing to VPS IP
-- [ ] GitHub connected to Coolify
-- [ ] Service created with correct Dockerfile path
-- [ ] `GEMINI_API_KEY` set in Coolify env vars
-- [ ] First deploy successful
-- [ ] `https://api.tosly.app/health` returns `ok`
+- [ ] `flyctl` installed
+- [ ] `fly auth signup` or `fly auth login`
+- [ ] `fly launch` run from `backend/` (no overwrite of fly.toml)
+- [ ] `fly secrets set GEMINI_API_KEY=...`
+- [ ] `fly deploy` succeeded
+- [ ] `https://tosly-backend.fly.dev/health` returns `ok`
 - [ ] `extension/.env.production` created with production URL
-- [ ] Webhook set up for auto-deploy (optional)
+- [ ] Custom domain set up (optional)
+- [ ] GitHub Actions auto-deploy set up (optional)
