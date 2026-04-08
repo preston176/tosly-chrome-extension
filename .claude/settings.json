@@ -26,7 +26,14 @@
       "Bash(python3 -c ':*)",
       "Bash(curl -s -X POST http://localhost:8080/analyze -H 'Content-Type: application/json' -d '{\"url\":\"https://example.com/terms\",\"text\":\"We may sell your personal data to third party advertisers for profit. You agree to mandatory arbitration and waive your right to a jury trial. The subscription automatically renews each year without notice.\"}')",
       "Bash(pkill -f tosly-backend)",
-      "Bash(/tmp/tosly-backend)"
+      "Bash(/tmp/tosly-backend)",
+      "Bash(npx astro:*)",
+      "Bash(identify /Users/app/Code/personal/tosly-chrome-extension/landing/public/logo.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /Users/app/Code/personal/tosly-chrome-extension/landing/public/logo.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /Users/app/Code/personal/tosly-chrome-extension/extension/assets/icon.png)",
+      "Bash(sips -z 512 512 /Users/app/Code/personal/tosly-chrome-extension/extension/assets/logo.png --out /Users/app/Code/personal/tosly-chrome-extension/extension/assets/icon.png)",
+      "Bash(node -e ':*)",
+      "Read(//private/tmp/**)"
     ]
   }
 }
