@@ -1,154 +1,180 @@
-# Tosly Backend — Deploy Plan (Fly.io)
+# Tosly Backend — Deploy Plan (DigitalOcean Droplet)
 
 ## Pre-flight answers
 
 | Question | Your answer |
 |---|---|
-| Fly.io app name | tosly-backend (or pick another) |
-| Closest region | <!-- lhr=London, iad=US East, ord=US Central, sin=Singapore, syd=Sydney --> |
-| Custom domain | <!-- e.g. api.tosly.app (optional) --> |
+| Droplet IP address | <!-- fill in --> |
+| SSH user | root (or your sudo user) |
+| Domain / subdomain | <!-- e.g. api.tosly.app (optional) --> |
+| Docker already installed? | <!-- yes / no --> |
 
 ---
 
-## Step 1 — Install flyctl
+## Step 1 — SSH into your droplet
 
 ```bash
-brew install flyctl
-```
-
-Or via the official installer:
-```bash
-curl -L https://fly.io/install.sh | sh
+ssh root@<YOUR_DROPLET_IP>
 ```
 
 ---
 
-## Step 2 — Sign up / log in
+## Step 2 — Install Docker (if not already installed)
 
 ```bash
-fly auth signup   # new account
-# or
-fly auth login    # existing account
+curl -fsSL https://get.docker.com | sh
+systemctl enable docker
+systemctl start docker
 ```
 
-No credit card required for the free tier.
+Verify:
+```bash
+docker --version
+docker compose version
+```
 
 ---
 
-## Step 3 — Launch the app
-
-From the `backend/` directory:
+## Step 3 — Clone the repo
 
 ```bash
-cd backend
-fly launch --name tosly-backend --region lhr --no-deploy
+git clone https://github.com/preston176/tosly-chrome-extension.git /opt/tosly
+cd /opt/tosly/backend
 ```
 
-- `--no-deploy` so we set secrets before first deploy
-- It will detect the `Dockerfile` and `fly.toml` automatically
-- Say **No** when asked to overwrite `fly.toml`
+Or if the repo is private, use a GitHub personal access token:
+```bash
+git clone https://YOUR_TOKEN@github.com/preston176/tosly-chrome-extension.git /opt/tosly
+```
 
 ---
 
-## Step 4 — Set secrets
+## Step 4 — Set your environment variable
 
 ```bash
-fly secrets set GEMINI_API_KEY=your_key_here
+echo "GEMINI_API_KEY=your_key_here" > /opt/tosly/backend/.env
 ```
 
-Never committed to git — stored encrypted in Fly.io.
+Never commit this file — it's in `.gitignore`.
 
 ---
 
-## Step 5 — Deploy
+## Step 5 — Build and start
 
 ```bash
-fly deploy
+cd /opt/tosly/backend
+docker compose up -d --build
 ```
 
-Fly builds the Docker image remotely, deploys to your chosen region, and gives you a URL like:
-`https://tosly-backend.fly.dev`
+- `-d` runs it in the background
+- `--build` builds the image from the Dockerfile
 
----
-
-## Step 6 — Verify
-
+Check it's running:
 ```bash
-curl https://tosly-backend.fly.dev/health
+docker compose ps
+curl http://localhost:8080/health
 # should return: ok
 ```
 
 ---
 
-## Step 7 — Update extension for production
+## Step 6 — Open the firewall port
+
+In DigitalOcean dashboard → **Networking → Firewalls** → add an inbound rule:
+
+| Type | Protocol | Port | Sources |
+|---|---|---|---|
+| Custom | TCP | 8080 | All IPv4, All IPv6 |
+
+Or via `ufw` on the droplet:
+```bash
+ufw allow 8080/tcp
+```
+
+Test from your machine:
+```bash
+curl http://<YOUR_DROPLET_IP>:8080/health
+```
+
+---
+
+## Step 7 — Point a domain + HTTPS (recommended)
+
+Install Caddy — it handles HTTPS automatically:
+
+```bash
+apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
+apt update && apt install caddy
+```
+
+Create `/etc/caddy/Caddyfile`:
+```
+api.tosly.app {
+    reverse_proxy localhost:8080
+}
+```
+
+Start Caddy:
+```bash
+systemctl enable caddy
+systemctl start caddy
+```
+
+Add a DNS A record:
+```
+api.tosly.app  →  <YOUR_DROPLET_IP>
+```
+
+Caddy auto-issues a Let's Encrypt cert. Test:
+```bash
+curl https://api.tosly.app/health
+```
+
+---
+
+## Step 8 — Update extension for production
 
 Create `extension/.env.production`:
 
 ```env
-PLASMO_PUBLIC_BACKEND_URL=https://tosly-backend.fly.dev
+# If using domain:
+PLASMO_PUBLIC_BACKEND_URL=https://api.tosly.app
+
+# If using raw IP (not recommended):
+PLASMO_PUBLIC_BACKEND_URL=http://<YOUR_DROPLET_IP>:8080
 ```
 
 Then `plasmo build` bakes in the production URL.
 
 ---
 
-## Custom domain (optional)
+## Subsequent deploys (pull latest + restart)
 
 ```bash
-fly certs add api.tosly.app
-```
-
-Then add a CNAME record in your DNS:
-```
-api.tosly.app  →  tosly-backend.fly.dev
-```
-
-Fly handles TLS automatically.
-
----
-
-## Subsequent deploys
-
-Any time you push changes to the backend:
-
-```bash
+cd /opt/tosly
+git pull
 cd backend
-fly deploy
+docker compose up -d --build
 ```
-
-Or set up GitHub Actions for auto-deploy on push (see below).
 
 ---
 
-## GitHub Actions auto-deploy (optional)
+## Useful commands
 
-Get your Fly API token:
 ```bash
-fly tokens create deploy
-```
+# View logs
+docker compose logs -f
 
-Add it to GitHub repo → **Settings → Secrets** → `FLY_API_TOKEN`
+# Restart
+docker compose restart
 
-Create `.github/workflows/deploy-backend.yml`:
+# Stop
+docker compose down
 
-```yaml
-name: Deploy Backend
-
-on:
-  push:
-    branches: [deploy/backend]
-    paths: [backend/**]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: fly deploy --remote-only
-        working-directory: backend
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+# Check status
+docker compose ps
 ```
 
 ---
@@ -156,12 +182,14 @@ jobs:
 ## Checklist
 
 - [ ] Fill in pre-flight answers above
-- [ ] `flyctl` installed
-- [ ] `fly auth signup` or `fly auth login`
-- [ ] `fly launch` run from `backend/` (no overwrite of fly.toml)
-- [ ] `fly secrets set GEMINI_API_KEY=...`
-- [ ] `fly deploy` succeeded
-- [ ] `https://tosly-backend.fly.dev/health` returns `ok`
+- [ ] SSH access confirmed
+- [ ] Docker installed and running
+- [ ] Repo cloned to `/opt/tosly`
+- [ ] `.env` file created with `GEMINI_API_KEY`
+- [ ] `docker compose up -d --build` succeeded
+- [ ] `curl http://localhost:8080/health` returns `ok`
+- [ ] Firewall port 8080 open
+- [ ] Caddy installed + Caddyfile configured (if using domain)
+- [ ] DNS A record pointing to droplet IP
+- [ ] `curl https://api.tosly.app/health` returns `ok`
 - [ ] `extension/.env.production` created with production URL
-- [ ] Custom domain set up (optional)
-- [ ] GitHub Actions auto-deploy set up (optional)
