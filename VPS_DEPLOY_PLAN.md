@@ -1,4 +1,4 @@
-# Tosly Backend — Deploy Plan (DigitalOcean + Coolify CI/CD)
+# Tosly Backend — Deploy Plan (DigitalOcean + GitHub Actions CI/CD)
 
 ## Pre-flight answers
 
@@ -7,29 +7,25 @@
 | Droplet IP address | <!-- fill in --> |
 | SSH user | root (or your sudo user) |
 | Domain / subdomain for API | <!-- e.g. api.tosly.app --> |
-| Coolify UI domain (optional) | <!-- e.g. coolify.tosly.app --> |
 
 ---
 
 ## Architecture
 
 ```
-GitHub push to deploy/backend
+git push origin deploy/backend
         ↓
-  Coolify (on droplet)
-  detects push via webhook
+  GitHub Actions runs
         ↓
-  builds Dockerfile
+  SSH into droplet
+  git pull + docker compose up --build
         ↓
-  replaces running container
-        ↓
-  Traefik (built into Coolify)
-  handles HTTPS + routing
+  Container replaced in ~30s
         ↓
   https://api.tosly.app/analyze
 ```
 
-No manual SSH needed after initial setup.
+No extra software on the droplet — just Docker + your container (~200MB total).
 
 ---
 
@@ -41,141 +37,117 @@ ssh root@<YOUR_DROPLET_IP>
 
 ---
 
-## Step 2 — Install Coolify (installs Docker too)
+## Step 2 — Install Docker
 
 ```bash
-curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+curl -fsSL https://get.docker.com | sh
+systemctl enable docker
+systemctl start docker
 ```
-
-This installs:
-- Docker + Docker Compose
-- Coolify itself
-- Traefik (reverse proxy + auto HTTPS)
-
-Access the UI at: `http://<YOUR_DROPLET_IP>:8000`
-
-Create your admin account on first visit.
-
-> **Firewall:** open port 8000 temporarily for setup, then restrict it to your IP once done.
 
 ---
 
-## Step 3 — Open required ports on DigitalOcean
+## Step 3 — Install Caddy (HTTPS reverse proxy)
 
-In DO dashboard → **Networking → Firewalls** → add inbound rules:
+```bash
+apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
+apt update && apt install caddy -y
+```
+
+Create `/etc/caddy/Caddyfile`:
+```
+api.tosly.app {
+    reverse_proxy localhost:8080
+}
+```
+
+```bash
+systemctl enable caddy && systemctl start caddy
+```
+
+---
+
+## Step 4 — Clone repo + set secrets
+
+```bash
+git clone https://github.com/preston176/tosly-chrome-extension.git /opt/tosly
+echo "GEMINI_API_KEY=your_key_here" > /opt/tosly/backend/.env
+```
+
+---
+
+## Step 5 — First deploy
+
+```bash
+cd /opt/tosly/backend
+docker compose up -d --build
+curl http://localhost:8080/health   # → ok
+curl https://api.tosly.app/health   # → ok (after DNS propagates)
+```
+
+---
+
+## Step 6 — Add DNS A record
+
+```
+api.tosly.app  →  <YOUR_DROPLET_IP>
+```
+
+---
+
+## Step 7 — Set up GitHub Actions CI/CD
+
+### 7a — Generate an SSH key pair for GitHub Actions
+
+On your **local machine**:
+```bash
+ssh-keygen -t ed25519 -C "github-actions-tosly" -f ~/.ssh/tosly_deploy
+```
+
+This creates:
+- `~/.ssh/tosly_deploy` (private key — goes to GitHub)
+- `~/.ssh/tosly_deploy.pub` (public key — goes to droplet)
+
+### 7b — Add public key to droplet
+
+```bash
+cat ~/.ssh/tosly_deploy.pub | ssh root@<YOUR_DROPLET_IP> "cat >> ~/.ssh/authorized_keys"
+```
+
+### 7c — Add secrets to GitHub
+
+Go to repo → **Settings → Secrets and variables → Actions → New repository secret**:
+
+| Secret name | Value |
+|---|---|
+| `DO_HOST` | your droplet IP |
+| `DO_USER` | `root` |
+| `DO_SSH_KEY` | contents of `~/.ssh/tosly_deploy` (the private key) |
+
+---
+
+## Step 8 — Create GitHub Actions workflow
+
+Already in the repo at `.github/workflows/deploy-backend.yml` (created below).
+
+Every push to `deploy/backend` that touches `backend/**` triggers:
+1. SSH into droplet
+2. `git pull`
+3. `docker compose up -d --build`
+
+---
+
+## DigitalOcean firewall rules
 
 | Purpose | Protocol | Port |
 |---|---|---|
-| Coolify UI (setup only) | TCP | 8000 |
-| HTTP (for cert issuance) | TCP | 80 |
-| HTTPS | TCP | 443 |
 | SSH | TCP | 22 |
+| HTTP (cert issuance) | TCP | 80 |
+| HTTPS | TCP | 443 |
 
-Port 8080 does NOT need to be public — Traefik proxies it internally.
-
----
-
-## Step 4 — Point your domain
-
-Add DNS A records:
-
-```
-api.tosly.app      →  <YOUR_DROPLET_IP>
-coolify.tosly.app  →  <YOUR_DROPLET_IP>   (optional, for Coolify UI)
-```
-
----
-
-## Step 5 — Connect GitHub to Coolify
-
-In Coolify UI:
-1. **Settings → Sources** → **Add** → **GitHub App**
-2. Follow the OAuth flow
-3. Grant access to `tosly-chrome-extension` repo
-
----
-
-## Step 6 — Create the service
-
-1. **Projects → New Project** → name it `tosly`
-2. **New Resource → Application → GitHub**
-3. Select:
-   - Repo: `tosly-chrome-extension`
-   - Branch: `deploy/backend`
-   - Build pack: **Dockerfile**
-   - Dockerfile path: `backend/Dockerfile`
-   - Port: `8080`
-4. Domain: `api.tosly.app`
-5. Coolify handles TLS automatically via Traefik
-
----
-
-## Step 7 — Set environment variables
-
-In the service → **Environment Variables** tab:
-
-| Key | Value |
-|---|---|
-| `GEMINI_API_KEY` | your Gemini API key |
-
-Never in git — only in Coolify UI.
-
----
-
-## Step 8 — Enable auto-deploy on push
-
-In the service → **Settings**:
-- Enable **Auto Deploy** → on push to `deploy/backend`
-
-Coolify sets up the GitHub webhook automatically.
-
-Now every `git push origin deploy/backend` triggers a rebuild and zero-downtime redeploy.
-
----
-
-## Step 9 — First deploy
-
-Click **Deploy** in the Coolify UI. Watch the build logs in real time.
-
-Verify:
-```bash
-curl https://api.tosly.app/health
-# should return: ok
-```
-
----
-
-## Step 10 — Update extension for production
-
-Create `extension/.env.production`:
-
-```env
-PLASMO_PUBLIC_BACKEND_URL=https://api.tosly.app
-```
-
-Then `plasmo build` bakes in the production URL.
-
----
-
-## Ongoing deploy workflow
-
-```bash
-# Make backend changes locally, then:
-git add .
-git commit -m "fix: ..."
-git push origin deploy/backend
-# Coolify detects push → rebuilds → redeploys automatically
-```
-
----
-
-## Useful Coolify features
-
-- **Build logs** — real-time in the UI
-- **Container logs** — live log streaming
-- **Rollback** — one click to previous deploy
-- **Health checks** — auto-restarts if `/health` fails
-- **Notifications** — Slack/email on deploy success/failure
+Port 8080 stays internal — Caddy proxies it, never exposed publicly.
 
 ---
 
@@ -183,15 +155,14 @@ git push origin deploy/backend
 
 - [ ] Fill in pre-flight answers above
 - [ ] SSH access confirmed
-- [ ] Coolify installed (`curl ... | bash`)
-- [ ] Coolify UI accessible at `http://<IP>:8000`
-- [ ] Admin account created
-- [ ] DNS A records pointing to droplet IP
-- [ ] GitHub connected to Coolify
-- [ ] Service created (repo, branch, Dockerfile path, port)
-- [ ] `GEMINI_API_KEY` set in Coolify env vars
-- [ ] Auto-deploy enabled
-- [ ] First deploy successful
+- [ ] Docker installed
+- [ ] Caddy installed + Caddyfile configured
+- [ ] Repo cloned to `/opt/tosly`
+- [ ] `.env` created with `GEMINI_API_KEY`
+- [ ] `docker compose up -d --build` succeeded
+- [ ] DNS A record added
 - [ ] `https://api.tosly.app/health` returns `ok`
+- [ ] Deploy SSH key generated and added to droplet
+- [ ] `DO_HOST`, `DO_USER`, `DO_SSH_KEY` secrets added to GitHub
+- [ ] GitHub Actions workflow committed and tested
 - [ ] `extension/.env.production` created with production URL
-- [ ] Port 8000 restricted to your IP (after setup)
