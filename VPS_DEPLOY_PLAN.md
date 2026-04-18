@@ -128,9 +128,35 @@ Go to repo → **Settings → Secrets and variables → Actions → New reposito
 
 ---
 
-## Step 8 — Create GitHub Actions workflow
+## Step 8 — GitHub Actions workflow
 
-Already in the repo at `.github/workflows/deploy-backend.yml` (created below).
+Already committed at `.github/workflows/deploy-backend.yml`:
+
+```yaml
+name: Deploy Backend
+
+on:
+  push:
+    branches: [deploy/backend]
+    paths: [backend/**]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            cd /opt/tosly
+            git pull origin deploy/backend
+            cd backend
+            docker compose up -d --build
+            docker image prune -f
+```
 
 Every push to `deploy/backend` that touches `backend/**` triggers:
 1. SSH into droplet
