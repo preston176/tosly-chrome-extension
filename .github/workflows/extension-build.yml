@@ -33,7 +33,7 @@ jobs:
 
       - name: Build extension (production)
         env:
-          PLASMO_PUBLIC_BACKEND_URL: ${{ vars.PLASMO_PUBLIC_BACKEND_URL || 'https://tosly-backend.onrender.com' }}
+          PLASMO_PUBLIC_BACKEND_URL: https://tosly-backend.onrender.com
         run: npm run build
 
       - name: Package extension

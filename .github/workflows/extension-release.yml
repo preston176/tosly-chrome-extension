@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+      CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+      CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+      CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
     defaults:
       run:
         working-directory: extension
@@ -29,7 +34,7 @@ jobs:
 
       - name: Build extension (production)
         env:
-          PLASMO_PUBLIC_BACKEND_URL: ${{ vars.PLASMO_PUBLIC_BACKEND_URL || 'https://tosly-backend.onrender.com' }}
+          PLASMO_PUBLIC_BACKEND_URL: https://tosly-backend.onrender.com
         run: npm run build
 
       - name: Package extension
@@ -53,12 +58,7 @@ jobs:
       # Optional: auto-publish to Chrome Web Store
       # Requires CWS_* secrets configured. Skipped if not set.
       - name: Publish to Chrome Web Store
-        if: ${{ env.CWS_EXTENSION_ID != '' }}
-        env:
-          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
-          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
-          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
-          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        if: env.CWS_EXTENSION_ID != ''
         run: |
           npx -y chrome-webstore-upload-cli@3 upload \
             --source build/tosly-${{ steps.version.outputs.version }}.zip \
