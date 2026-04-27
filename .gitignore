@@ -13,3 +13,9 @@ extension/build/
 
 # OS
 .DS_Store
+
+# Private notes (lives in tosly-private-notes repo)
+GTM_LAUNCH_COPY.md
+PLAN.md
+PLASMO_PLAN.md
+VPS_DEPLOY_PLAN.md
