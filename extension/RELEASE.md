@@ -69,3 +69,4 @@ Every build on `main` uploads two artifacts to the workflow run (downloadable fo
 - **`tosly-extension-build`** — unpacked production build (load via `chrome://extensions` → Load unpacked)
 - **`tosly-extension-zip`** — packaged zip for Chrome Web Store upload
 
+
