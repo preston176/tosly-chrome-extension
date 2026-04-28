@@ -60,7 +60,7 @@ const features = [
     num: '01',
     title: 'Reads the fine print',
     accent: 'so you don\'t have to',
-    body: 'Tosly\'s AI scans every clause the moment you land on a ToS page — before you click accept.',
+    body: 'Tosly\'s AI scans every clause the moment you land on a ToS page - before you click accept.',
     bullets: ['Detects 40+ predatory clause types', 'Reads legal language others skip', 'Works on any site, automatically'],
   },
   {
@@ -97,26 +97,26 @@ const severityConfig = {
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
   <!-- SEO -->
-  <title>Tosly — Read Every ToS in Seconds</title>
-  <meta name="description" content="Tosly is a free Chrome extension that automatically scans Terms of Service pages, flags predatory clauses in plain English, and highlights the exact text — before you click Accept." />
+  <title>Tosly - Read Every ToS in Seconds</title>
+  <meta name="description" content="Tosly is a free Chrome extension that automatically scans Terms of Service pages, flags predatory clauses in plain English, and highlights the exact text - before you click Accept." />
   <meta name="keywords" content="terms of service scanner, privacy policy analyzer, chrome extension, legal risk, ToS highlights" />
   <link rel="canonical" href="https://tosly.app/" />
 
   <!-- OG -->
-  <meta property="og:title" content="Tosly — Read Every ToS in Seconds" />
+  <meta property="og:title" content="Tosly - Read Every ToS in Seconds" />
   <meta property="og:description" content="AI-powered Chrome extension that scans Terms of Service and highlights predatory clauses before you agree to them." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://tosly.app/" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Tosly — Read Every ToS in Seconds" />
+  <meta name="twitter:title" content="Tosly - Read Every ToS in Seconds" />
   <meta name="twitter:description" content="AI-powered Chrome extension that flags predatory clauses in any Terms of Service." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <!-- Schema.org -->
   <script type="application/ld+json">
@@ -196,27 +196,35 @@ const severityConfig = {
 
   <!-- ── Nav ───────────────────────────────────────────────────────────── -->
   <header class="fixed top-0 left-0 right-0 z-50">
-    <nav class="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-      <div class="glass rounded-full px-5 py-2.5 flex items-center gap-8 shadow-sm">
-        <!-- Logo -->
-        <a href="/" class="flex items-center group">
-          <img src="/logo.png" alt="Tosly" height="28" style="height:28px; width:auto;" />
-        </a>
-        <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+    <nav class="mx-auto max-w-6xl px-6 h-16 grid grid-cols-3 items-center">
+      <!-- Logo (left) -->
+      <a href="/" class="glass rounded-full px-5 py-2.5 inline-flex items-center w-max shadow-sm">
+        <img src="/logo.png" alt="Tosly" height="28" style="height:28px; width:auto;" />
+      </a>
+
+      <!-- Nav links (center) -->
+      <div class="hidden md:flex justify-center">
+        <div class="glass rounded-full px-6 py-2.5 flex items-center gap-6 text-sm font-medium shadow-sm">
           <a href="#how-it-works" class="text-[#6b7280] hover:text-[#0a0a0c] transition-colors">How it works</a>
           <a href="#features" class="text-[#6b7280] hover:text-[#0a0a0c] transition-colors">Features</a>
           <a href="#faq" class="text-[#6b7280] hover:text-[#0a0a0c] transition-colors">FAQ</a>
         </div>
       </div>
-      <a
-        href="#"
-        class="glass rounded-full px-5 py-2.5 text-sm font-semibold text-[#0a0a0c] shadow-sm hover:bg-[#0a0a0c] transition-all duration-200 inline-flex items-center gap-2"
-      >
-        <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
-        Add to Chrome — free
-      </a>
+
+      <!-- CTA (right) -->
+      <div class="flex justify-end">
+        <a
+          href="#"
+          class="glass rounded-full px-5 py-2.5 text-sm font-semibold text-[#0a0a0c] shadow-sm hover:bg-[#0a0a0c] transition-all duration-200 inline-flex items-center gap-2"
+        >
+          <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
+          Add to Chrome - free
+        </a>
+      </div>
     </nav>
   </header>
+
+  <main>
 
   <!-- ── Hero ──────────────────────────────────────────────────────────── -->
   <section class="hero-glow relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-6 overflow-hidden noise">
@@ -236,7 +244,7 @@ const severityConfig = {
     </h1>
 
     <p class="animate-float-up delay-200 mt-6 text-center max-w-lg text-[#6b7280] text-[1.05rem] leading-relaxed font-normal">
-      Tosly scans every Terms of Service page in seconds, flags the clauses designed to hurt you, and highlights the exact text — before you agree.
+      Tosly scans every Terms of Service page in seconds, flags the clauses designed to hurt you, and highlights the exact text - before you agree.
     </p>
 
     <!-- CTA -->
@@ -246,7 +254,7 @@ const severityConfig = {
         class="lift inline-flex items-center gap-2.5 bg-[#0a0a0c] text-white rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide shadow-lg hover:bg-[#1c1c20]"
       >
         <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
-        Add to Chrome — it's free
+        Add to Chrome - it's free
       </a>
       <a href="#how-it-works" class="text-sm font-medium text-[#6b7280] hover:text-[#0a0a0c] transition-colors">
         See how it works →
@@ -275,7 +283,7 @@ const severityConfig = {
             class="w-full h-full object-cover"
           />
 
-          <!-- Dark overlay — lightens on hover -->
+          <!-- Dark overlay - lightens on hover -->
           <div class="absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-colors duration-300"></div>
 
           <!-- Ambient colour bleed from thumbnail -->
@@ -383,7 +391,7 @@ const severityConfig = {
 
   <!-- ── Logo strip ─────────────────────────────────────────────────────── -->
   <section class="py-12 border-y border-[#e5e7eb] bg-white overflow-hidden">
-    <p class="text-center text-xs font-medium tracking-widest text-[#9ca3af] uppercase mb-7">
+    <p class="text-center text-xs font-medium tracking-widest text-[#6b7280] uppercase mb-7">
       Try it on any of these services
     </p>
     <div class="relative overflow-hidden ticker-container">
@@ -393,7 +401,7 @@ const severityConfig = {
             href={co.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 mx-10 text-[#b0b4bc] hover:text-[#6b7280] transition-colors duration-200 cursor-pointer"
+            class="inline-flex items-center gap-2 mx-10 text-[#6b7280] hover:text-[#0a0a0c] transition-colors duration-200 cursor-pointer"
           >
             <span class="w-5 h-5 flex-shrink-0" set:html={co.svg} />
             <span class="text-sm font-semibold tracking-wide">{co.name}</span>
@@ -407,7 +415,7 @@ const severityConfig = {
   <section id="how-it-works" class="py-28 px-6">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-20">
-        <span class="text-xs font-semibold tracking-widest uppercase text-[#ef4444] mb-3 block">How it works</span>
+        <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">How it works</span>
         <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;">
           Three steps between you<br/>and the truth
         </h2>
@@ -436,7 +444,7 @@ const severityConfig = {
   <section id="features" class="py-20 px-6 bg-white">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-20">
-        <span class="text-xs font-semibold tracking-widest uppercase text-[#ef4444] mb-3 block">Features</span>
+        <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">Features</span>
         <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;">
           Built to catch what<br/>
           <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400;">companies hide</em>
@@ -449,7 +457,7 @@ const severityConfig = {
             <!-- Text -->
             <div>
               <div class="flex items-center gap-3 mb-6">
-                <span class="text-xs font-mono font-medium text-[#9ca3af]">{feat.num}</span>
+                <span class="text-xs font-mono font-medium text-[#6b7280]">{feat.num}</span>
                 <div class="h-px flex-1 bg-[#e5e7eb]"></div>
               </div>
               <h3 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:700; letter-spacing:-0.02em; color:#0a0a0c; line-height:1.15;" class="mb-4">
@@ -474,7 +482,7 @@ const severityConfig = {
             <div class="feat-card rounded-2xl p-6 min-h-[280px] flex items-center justify-center relative overflow-hidden noise">
               {i === 0 && (
                 <div class="w-full space-y-2 text-xs">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#9ca3af] mb-4">Live scan — spotify.com</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#6b7280] mb-4">Live scan - spotify.com</div>
                   {flags.map(flag => {
                     const cfg = severityConfig[flag.severity];
                     return (
@@ -491,7 +499,7 @@ const severityConfig = {
               )}
               {i === 1 && (
                 <div class="w-full">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#9ca3af] mb-4">Highlighted on-page</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#6b7280] mb-4">Highlighted on-page</div>
                   <div class="space-y-3 text-sm text-[#374151] leading-relaxed">
                     <p>By accessing our services you agree to be bound by these terms. <span class="rounded px-1 py-0.5" style="background:rgba(239,68,68,0.15); outline:1px solid rgba(239,68,68,0.4);">We may share your personal data with third-party advertising partners at our discretion.</span> Any disputes shall be resolved via binding arbitration.</p>
                     <p>Your account automatically <span class="rounded px-1 py-0.5" style="background:rgba(234,179,8,0.15); outline:1px solid rgba(234,179,8,0.4);">renews unless cancelled 24 hours before the billing period ends.</span></p>
@@ -501,7 +509,7 @@ const severityConfig = {
               )}
               {i === 2 && (
                 <div class="flex flex-col items-center gap-4 w-full">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#9ca3af] mb-2">Widget settings</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#6b7280] mb-2">Widget settings</div>
                   <div class="glass w-full max-w-xs rounded-xl p-4 space-y-3">
                     {[
                       { label: 'Auto-scan TOS pages', on: true },
@@ -516,7 +524,7 @@ const severityConfig = {
                       </div>
                     ))}
                   </div>
-                  <div class="text-[10px] text-[#9ca3af] text-center">Position persists across all sites</div>
+                  <div class="text-[10px] text-[#6b7280] text-center">Position persists across all sites</div>
                 </div>
               )}
             </div>
@@ -529,15 +537,15 @@ const severityConfig = {
   <!-- ── Severity breakdown ─────────────────────────────────────────────── -->
   <section class="py-24 px-6 hero-glow overflow-hidden noise relative">
     <div class="max-w-4xl mx-auto text-center">
-      <span class="text-xs font-semibold tracking-widest uppercase text-[#ef4444] mb-3 block">Risk Tiers</span>
+      <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">Risk Tiers</span>
       <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.8rem,3.5vw,2.8rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;" class="mb-14">
         Every flag tells you<br/>exactly how worried to be
       </h2>
       <div class="grid md:grid-cols-3 gap-5">
         {[
-          { color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)', label: 'High Risk', icon: '!', desc: 'Clauses that directly harm you — data selling, forced arbitration, unilateral changes.' },
-          { color: '#eab308', bg: 'rgba(234,179,8,0.06)', border: 'rgba(234,179,8,0.15)', label: 'Caution', icon: '~', desc: 'Watch-outs worth knowing — auto-renewals, broad license grants, price change rights.' },
-          { color: '#22c55e', bg: 'rgba(34,197,94,0.06)', border: 'rgba(34,197,94,0.15)', label: 'Clear', icon: '✓', desc: 'User-friendly clauses — data deletion rights, clear cancellation terms, GDPR compliance.' },
+          { color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)', label: 'High Risk', icon: '!', desc: 'Clauses that directly harm you - data selling, forced arbitration, unilateral changes.' },
+          { color: '#eab308', bg: 'rgba(234,179,8,0.06)', border: 'rgba(234,179,8,0.15)', label: 'Caution', icon: '~', desc: 'Watch-outs worth knowing - auto-renewals, broad license grants, price change rights.' },
+          { color: '#22c55e', bg: 'rgba(34,197,94,0.06)', border: 'rgba(34,197,94,0.15)', label: 'Clear', icon: '✓', desc: 'User-friendly clauses - data deletion rights, clear cancellation terms, GDPR compliance.' },
         ].map(tier => (
           <div class="rounded-2xl p-7 text-left lift noise relative overflow-hidden" style={`background:${tier.bg}; border:1px solid ${tier.border};`}>
             <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-5 text-sm font-bold" style={`background:${tier.color}20; color:${tier.color}; border:1px solid ${tier.color}40;`}>
@@ -555,21 +563,21 @@ const severityConfig = {
   <section id="faq" class="py-24 px-6 bg-white">
     <div class="max-w-2xl mx-auto">
       <div class="text-center mb-14">
-        <span class="text-xs font-semibold tracking-widest uppercase text-[#ef4444] mb-3 block">FAQ</span>
+        <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">FAQ</span>
         <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.8rem,3.5vw,2.6rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c;">Common questions</h2>
       </div>
       <div class="space-y-3">
         {[
           { q: 'Is it really free?', a: 'Yes. Tosly is completely free to use with no paywalled features.' },
           { q: 'Does Tosly read my browsing history?', a: 'No. Tosly only activates on pages that match Terms of Service URL patterns or titles. It never reads or stores any other browsing data.' },
-          { q: 'How accurate is the AI analysis?', a: 'Tosly uses Gemini to identify clause types against known predatory patterns. It provides useful signal — not legal advice. For important contracts, consult a lawyer.' },
+          { q: 'How accurate is the AI analysis?', a: 'Tosly uses AI to identify clause types against known predatory patterns. It provides useful signal - not legal advice. For important contracts, consult a lawyer.' },
           { q: 'Does it work on every site?', a: 'Tosly works on any publicly accessible Terms of Service or Privacy Policy page. If a site uses uncommon URL patterns, you can trigger a manual scan.' },
-          { q: 'What data leaves my browser?', a: 'Only the page text and URL are sent to our backend for analysis. Results are cached for 7 days — the same page won\'t be re-analyzed unnecessarily.' },
+          { q: 'What data leaves my browser?', a: 'Only the page text and URL are sent to our backend for analysis. Results are cached for 7 days - the same page won\'t be re-analyzed unnecessarily.' },
         ].map(item => (
           <details class="glass rounded-xl group">
             <summary class="flex items-center justify-between px-6 py-4 cursor-pointer list-none">
               <span class="font-medium text-[#0a0a0c] text-sm">{item.q}</span>
-              <svg class="w-4 h-4 text-[#9ca3af] transition-transform group-open:rotate-45" viewBox="0 0 16 16" fill="none">
+              <svg class="w-4 h-4 text-[#6b7280] transition-transform group-open:rotate-45" viewBox="0 0 16 16" fill="none">
                 <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </summary>
@@ -608,10 +616,12 @@ const severityConfig = {
         class="lift inline-flex items-center gap-3 bg-white text-[#0a0a0c] rounded-full px-8 py-4 text-sm font-bold tracking-wide shadow-xl"
       >
         <img src="/google.svg" alt="Chrome" width="18" height="18" class="flex-shrink-0" />
-        Add to Chrome — free forever
+        Add to Chrome - free forever
       </a>
     </div>
   </section>
+
+  </main>
 
   <!-- ── Footer ─────────────────────────────────────────────────────────── -->
   <footer class="bg-[#0a0a0c] border-t border-white/[0.06] px-6 py-10">
@@ -619,8 +629,8 @@ const severityConfig = {
       <div class="flex items-center">
         <img src="/logo.png" alt="Tosly" style="height:22px; width:auto; opacity:0.5;" />
       </div>
-      <p class="text-white/25 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
-      <div class="flex items-center gap-5 text-xs text-white/30">
+      <p class="text-white/60 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
+      <div class="flex items-center gap-5 text-xs text-white/60">
         <a href="#" class="hover:text-white/60 transition-colors">Privacy</a>
         <a href="#" class="hover:text-white/60 transition-colors">Terms</a>
         <a href="#" class="hover:text-white/60 transition-colors">GitHub</a>
