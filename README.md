@@ -6,7 +6,6 @@ Tosly is a Chrome extension that scans Terms of Service and Privacy Policy pages
 
 - **Try it:** [Chrome Web Store](https://chromewebstore.google.com/) *(link coming soon)*
 - **Landing page:** [tosly.app](https://tosly.app) *(link coming soon)*
-- **Backend:** [tosly-backend.onrender.com/health](https://tosly-backend.onrender.com/health)
 
 ---
 
@@ -19,11 +18,10 @@ Tosly is a Chrome extension that scans Terms of Service and Privacy Policy pages
 │                  │ ◀─────────────── │                   │
 └──────────────────┘   structured     └────────┬──────────┘
                        JSON response           │
-                                               │ Gemini API
+                                               │ LLM API
                                                ▼
                                         ┌────────────┐
-                                        │  Google    │
-                                        │  Gemini    │
+                                        │  AI model  │
                                         └────────────┘
 ```
 
@@ -34,7 +32,7 @@ Tosly is a Chrome extension that scans Terms of Service and Privacy Policy pages
    - array of flags, each with category, explanation, and the exact quote from the document
 3. **Extension popup** renders the result with traffic-light tiers and clickable highlights
 
-Results are cached for 7 days per URL on the backend to keep latency and Gemini costs down.
+Results are cached for 7 days per URL on the backend to keep latency and LLM costs down.
 
 ---
 
@@ -45,7 +43,7 @@ This is a monorepo with three packages:
 | Package | Stack | What it does |
 |---------|-------|--------------|
 | [`extension/`](extension/) | Plasmo, React, TypeScript, Tailwind | The Chrome extension (Manifest V3) |
-| [`backend/`](backend/) | Go 1.24, `google.golang.org/genai` | Stateless analysis API with in-memory LRU cache |
+| [`backend/`](backend/) | Go 1.24 | Stateless analysis API with in-memory LRU cache |
 | [`landing/`](landing/) | Astro, Tailwind | Marketing site at tosly.app |
 
 ---
@@ -56,13 +54,13 @@ This is a monorepo with three packages:
 
 - Node 20+
 - Go 1.24+
-- A [Gemini API key](https://aistudio.google.com/apikey) (free tier works)
+- An LLM API key (see `backend/.env.example`)
 
 ### Run the backend
 
 ```bash
 cd backend
-echo "GEMINI_API_KEY=your-key-here" > .env
+cp .env.example .env  # then fill in your API key
 go run .
 # → listening on :8080
 ```
@@ -84,7 +82,7 @@ npm run dev
 
 Then load `extension/build/chrome-mv3-dev` as an unpacked extension in `chrome://extensions`.
 
-The dev build talks to `http://localhost:8080`. The production build (CI) points at `https://tosly-backend.onrender.com`.
+The dev build talks to `http://localhost:8080`. The production build is configured via CI (`PLASMO_PUBLIC_BACKEND_URL`).
 
 ### Run the landing page
 
@@ -131,7 +129,7 @@ Response:
 
 | What | Where | Triggered by |
 |------|-------|--------------|
-| Backend | [Render](https://render.com) | Push to `main` (auto-deploys via Render's GitHub integration) |
+| Backend | Container host | Push to `main` (auto-deploys via host's GitHub integration) |
 | Extension | Chrome Web Store + GitHub Releases | Push tag `extension-v*` (see [`extension/RELEASE.md`](extension/RELEASE.md)) |
 | Landing | TBD (Vercel / Netlify) | - |
 
@@ -145,13 +143,13 @@ CI workflows live in [`.github/workflows/`](.github/workflows/):
 ## Tech notes
 
 **Why Go for the backend?**
-Stateless analysis fits a single binary perfectly. `google.golang.org/genai` v1.52+ supports Gemini's structured-output mode, which removes the brittleness of parsing free-form LLM text.
+Stateless analysis fits a single binary perfectly. The LLM client uses structured-output mode for reliable JSON, which removes the brittleness of parsing free-form text.
 
 **Why Plasmo for the extension?**
 Hot reload, scoped CSS (no host-page bleed), and built-in MV3 support. Cuts the boilerplate every extension project re-writes.
 
-**Why Gemini?**
-Generous free tier, fast structured output, and good legal-text comprehension. The prompt is designed to be model-agnostic - swapping providers is a single file change.
+**LLM provider**
+The prompt is designed to be model-agnostic - swapping providers is a single file change in `backend/llm/`.
 
 ---
 
