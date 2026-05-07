@@ -1,0 +1,59 @@
+title: |md
+  # Tosly · how analysis flows
+| {near: top-center; shape: text}
+
+direction: right
+
+page: "ToS page" {
+  shape: page
+  style: {
+    fill: "#f5f5f5"
+    stroke: "#9ca3af"
+    stroke-dash: 4
+    font-color: "#1f2937"
+  }
+}
+
+extension: "Chrome extension" {
+  shape: rectangle
+  style: {
+    fill: "#fff7ed"
+    stroke: "#ea580c"
+    border-radius: 8
+    font-color: "#1f2937"
+  }
+  stack: |md
+    Plasmo · React · TS
+  | {shape: text; style.font-size: 12}
+}
+
+backend: "Go backend" {
+  shape: rectangle
+  style: {
+    fill: "#eff6ff"
+    stroke: "#2563eb"
+    border-radius: 8
+    font-color: "#1f2937"
+  }
+  stack: |md
+    /analyze · 7-day cache
+  | {shape: text; style.font-size: 12}
+}
+
+llm: "LLM" {
+  shape: hexagon
+  style: {
+    fill: "#faf5ff"
+    stroke: "#9333ea"
+    font-color: "#1f2937"
+  }
+  stack: |md
+    AI model
+  | {shape: text; style.font-size: 12}
+}
+
+page -> extension: "reads" {style.font-size: 12}
+extension -> backend: "POST /analyze\n{ url, text }" {style.font-size: 12}
+backend -> extension: "{ severity, flags }" {style.font-size: 12}
+backend -> llm: "prompt" {style.font-size: 12}
+llm -> backend: "JSON" {style.font-size: 12}
