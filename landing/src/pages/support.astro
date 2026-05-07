@@ -1,0 +1,145 @@
+---
+import '../styles/global.css';
+
+const TALLY_FORM_ID = import.meta.env.PUBLIC_TALLY_FORM_ID;
+
+const faqs = [
+  {
+    q: 'How does Tosly read a Terms of Service page?',
+    a: 'When you open a ToS or Privacy Policy page, the extension extracts the visible text and sends it to our backend along with the URL. An LLM analyzes the document and returns severity flags. Only the page text and URL leave your browser - no identity, history, or other content.',
+  },
+  {
+    q: 'Is anything stored about me?',
+    a: 'No. There is no account, no login, no fingerprint. Analysis results are cached server-side per URL for 7 days, but the cache holds the analysis output only - never user identifiers.',
+  },
+  {
+    q: 'Why does Tosly need access to all websites?',
+    a: 'A ToS page can live on any domain. Tosly needs the host_permissions wildcard to read text on whatever site you visit. The extension only acts on pages it identifies as ToS or Privacy Policy documents.',
+  },
+  {
+    q: 'Is this legal advice?',
+    a: 'No. Tosly provides useful signal for personal decisions. For important contracts, consult a qualified attorney.',
+  },
+  {
+    q: 'Can I report a wrong flag or a missed clause?',
+    a: 'Yes - that is the most useful feedback we get. Use the form below or open a GitHub issue with the URL and a short description.',
+  },
+  {
+    q: 'How do I disable Tosly on a specific site?',
+    a: 'Click the Tosly icon in your browser toolbar and toggle "auto-scan" off. The setting persists across sessions.',
+  },
+  {
+    q: 'Where is the source code?',
+    a: 'On GitHub at preston176/tosly-chrome-extension. Read the prompt in backend/llm/ if you want to see exactly how the analysis is structured.',
+  },
+];
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="generator" content={Astro.generator} />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+  <title>Support - Tosly</title>
+  <meta name="description" content="Get help with Tosly, the Chrome extension that reads Terms of Service for you. FAQ and contact form." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://tosly.online/support" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+
+<body class="bg-[#f8f8fb] text-[#0a0a0c] min-h-screen">
+
+  <header class="max-w-3xl mx-auto px-6 pt-12 pb-8">
+    <a href="/" class="inline-flex items-center gap-3 group">
+      <img src="/logo.png" alt="Tosly" style="height:28px; width:auto;" />
+      <span class="text-sm text-[#6b7280] group-hover:text-[#0a0a0c] transition-colors">← Back to home</span>
+    </a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-6 pb-24">
+
+    <section class="mb-16">
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Support</h1>
+      <p class="text-lg text-[#6b7280] leading-relaxed">
+        Most questions are answered below. If yours isn't, the form at the bottom reaches us directly - we read every one and reply within 24 hours.
+      </p>
+    </section>
+
+    <section class="mb-20">
+      <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Frequently asked</h2>
+      <div class="space-y-2">
+        {faqs.map((faq) => (
+          <details class="group bg-white rounded-xl border border-[#e5e7eb] overflow-hidden">
+            <summary class="flex items-center justify-between cursor-pointer px-6 py-5 list-none">
+              <span class="font-semibold text-[#0a0a0c] pr-6">{faq.q}</span>
+              <svg class="w-4 h-4 text-[#6b7280] transition-transform group-open:rotate-45 flex-shrink-0" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </summary>
+            <div class="px-6 pb-6 text-[#374151] leading-relaxed">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Still need help</h2>
+      <div class="bg-white rounded-2xl border border-[#e5e7eb] overflow-hidden">
+        {TALLY_FORM_ID ? (
+          <iframe
+            src={`https://tally.so/embed/${TALLY_FORM_ID}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`}
+            loading="lazy"
+            title="Tosly support form"
+            class="block w-full border-0"
+            style="height:500px; margin:0;"
+          ></iframe>
+        ) : (
+          <div class="p-8 text-center text-[#6b7280]">
+            <p class="mb-2">Support form is being configured.</p>
+            <p class="text-sm">In the meantime, please <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-[#0a0a0c]">open a GitHub issue</a>.</p>
+          </div>
+        )}
+      </div>
+
+      <p class="text-sm text-[#6b7280] mt-6 text-center">
+        Prefer GitHub? <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-[#0a0a0c]">Open an issue</a> for technical bug reports.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="bg-[#0a0a0c] border-t border-white/[0.06] px-6 py-8">
+    <div class="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <img src="/logo.png" alt="Tosly" style="height:20px; width:auto; opacity:0.5;" />
+      <p class="text-white/60 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
+    </div>
+  </footer>
+
+  <script is:inline type="text/javascript">
+    var d = document, w = "https://tally.so/widgets/embed.js", v = function () {
+      "undefined" != typeof Tally
+        ? Tally.loadEmbeds()
+        : d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function (e) {
+            e.src = e.dataset.tallySrc;
+          });
+    };
+    if ("undefined" != typeof Tally) v();
+    else if (d.querySelector('script[src="' + w + '"]') == null) {
+      var s = d.createElement("script");
+      (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
+    }
+  </script>
+
+</body>
+</html>

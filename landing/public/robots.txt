@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tosly.app/sitemap.xml
+Sitemap: https://tosly.online/sitemap.xml
