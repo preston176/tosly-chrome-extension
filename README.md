@@ -5,6 +5,11 @@
 
   [Chrome Web Store](#) · [Firefox - planned](#) · [Landing page](#) · [Report a bug](https://github.com/preston176/tosly-chrome-extension/issues/new)
 
+  <br />
+
+  <!-- TODO: replace with hero screenshot or demo GIF -->
+  <img src="docs/screenshots/hero.png" alt="Tosly analyzing a Terms of Service page" width="800" />
+
 </div>
 
 ---
@@ -23,6 +28,11 @@ Category: Data Selling
 Why it matters: Your personal information is sold to other
 companies for ads. You cannot opt out by using the service.
 ```
+
+<!-- TODO: replace with screenshot of a real flagged ToS clause -->
+<p align="center">
+  <img src="docs/screenshots/example-flag.png" alt="Tosly flagging a data-selling clause on Spotify's Privacy policy" width="800" />
+</p>
 
 Same for forced arbitration clauses, auto-renewals, broad license grants, and ~40 other patterns.
 
@@ -61,23 +71,20 @@ The full request payload is in [`backend/handlers/analyze.go`](backend/handlers/
 
 ## How it works
 
-```
-┌──────────────────┐    HTTPS POST    ┌───────────────────┐
-│ Chrome extension │ ───────────────▶ │   Go backend      │
-│  (Plasmo / TS)   │                  │   /analyze        │
-│                  │ ◀─────────────── │                   │
-└──────────────────┘   structured     └────────┬──────────┘
-                       JSON response           │
-                                               │ LLM API
-                                               ▼
-                                        ┌────────────┐
-                                        │  AI model  │
-                                        └────────────┘
-```
+<!-- Diagram source: D2 (https://d2lang.com). Edit docs/diagrams/architecture.d2 then run:
+     d2 docs/diagrams/architecture.d2 docs/diagrams/architecture.svg -->
+<p align="center">
+  <img src="docs/diagrams/architecture.svg" alt="Tosly architecture: extension → Go backend → LLM" width="720" />
+</p>
 
 1. Content script detects ToS / Privacy pages and extracts visible text.
 2. Backend prompts an LLM with a structured-output schema.
 3. Extension renders the result: severity (red / yellow / green), summary, and per-flag quotes highlighted on the page.
+
+<!-- TODO: replace with screenshot of the popup showing severity tiers + flag list -->
+<p align="center">
+  <img src="docs/screenshots/popup.png" alt="Tosly popup showing severity tiers and detected flags" width="420" />
+</p>
 
 The prompt is the actual product. It lives in `backend/llm/` and is the file most worth reading if you're curious how the analysis stays consistent.
 
@@ -139,31 +146,7 @@ npm run dev
 
 ## API
 
-`POST /analyze`
-
-```json
-{
-  "url": "https://example.com/privacy",
-  "text": "By using this service you agree to..."
-}
-```
-
-Returns:
-
-```json
-{
-  "severity": "red",
-  "summary": "This service collects your personal information and shares it with advertisers.",
-  "flags": [
-    {
-      "category": "Data Selling",
-      "severity": "red",
-      "explanation": "Your personal information is sold to other companies for ads.",
-      "quote": "We may share your data with third parties for advertising purposes."
-    }
-  ]
-}
-```
+See [`backend/README.md`](backend/README.md) for the `/analyze` request and response contract.
 
 ---
 
