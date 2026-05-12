@@ -161,7 +161,9 @@ export default function ResultPanel({ result, onDismiss, anchorAbove = true }: R
 
   function scrollTo(flagIndex: number) {
     setActiveIndex(flagIndex)
-    chrome.runtime.sendMessage({ type: "SCROLL_TO_HIGHLIGHT", index: flagIndex })
+    document.dispatchEvent(
+      new CustomEvent("tosly:scroll-to-highlight", { detail: { index: flagIndex } })
+    )
   }
 
   function prev() {
