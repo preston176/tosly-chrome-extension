@@ -1,8 +1,8 @@
 {
   "name": "tosly",
   "displayName": "Tosly",
-  "version": "0.0.1",
-  "description": "Grammarly for Legal Risk — scans Terms of Service in real time.",
+  "version": "0.0.2",
+  "description": "Reads Terms of Service with AI and flags clauses that work against you - data selling, arbitration, auto-renewals.",
   "author": "Tosly",
   "scripts": {
     "dev": "plasmo dev",
@@ -38,8 +38,7 @@
       "http://localhost:8080/*"
     ],
     "permissions": [
-      "storage",
-      "tabs"
+      "storage"
     ]
   }
 }

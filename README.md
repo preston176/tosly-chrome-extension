@@ -62,7 +62,6 @@ Tosly is a privacy tool. It would be embarrassing to leak your data, so:
 | Permission | Why |
 |------------|-----|
 | `storage` | Saves your widget position and "auto-scan on/off" preference locally |
-| `tabs` | Detects when you navigate to a ToS or Privacy Policy page |
 | `host_permissions: <all_urls>` | Required to read ToS text on whatever site you visit |
 
 The full request payload is in [`backend/handlers/analyze.go`](backend/handlers/analyze.go). The full prompt sent to the LLM is in [`backend/llm/`](backend/llm/). Read the source.
