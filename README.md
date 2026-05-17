@@ -11,7 +11,7 @@
 
   <p>
     <a href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig">
-      <img src="https://www.gstatic.com/devrel-devsite/prod/vb114763cc2305a85e6a106d59af57ee9014c30d60a4a13753c950f0c3f9c034b/chrome/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" height="60" />
+      <img src="https://developer.chrome.com/static/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" height="60" />
     </a>
   </p>
 
