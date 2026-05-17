@@ -1,14 +1,45 @@
 <div align="center">
-  <img src="extension/assets/logo.png" alt="Tosly" height="80" />
 
-  **Tosly reads Terms of Service pages with an LLM and flags the clauses that work against you - data selling, forced arbitration, surveillance, auto-renewals - with the exact quote from the document.**
+  <img src="landing/public/logo.png" alt="Tosly" height="72" />
 
-  [Chrome Web Store](#) · [Firefox - planned](#) · [Landing page](#) · [Report a bug](https://github.com/preston176/tosly-chrome-extension/issues/new)
+  <h3>You clicked Accept. Without reading it.</h3>
 
-  <br />
+  <p>
+    <strong>Tosly reads Terms of Service pages and flags the clauses that work against you</strong><br/>
+    e.g. data selling, forced arbitration, surveillance, auto-renewals - with the exact quote from the document.
+  </p>
 
-  <!-- TODO: replace with hero screenshot or demo GIF -->
-  <img src="docs/screenshots/hero.png" alt="Tosly analyzing a Terms of Service page" width="800" />
+  <p>
+    <a href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig">
+      <img src="https://img.shields.io/badge/Add%20to%20Chrome-Install%20Free-0a0a0c?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Add to Chrome" height="44" />
+    </a>
+  </p>
+
+  <p>
+    <sub>Free forever &nbsp;·&nbsp; No account &nbsp;·&nbsp; Open source</sub>
+  </p>
+
+  <p>
+    <a href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig">
+      <img src="https://img.shields.io/chrome-web-store/v/gnnaglpijpngbbpamicaifonnkjbicig?label=version&style=flat-square&color=4285F4" alt="Chrome Web Store version" />
+    </a>
+    <a href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig">
+      <img src="https://img.shields.io/chrome-web-store/users/gnnaglpijpngbbpamicaifonnkjbicig?label=users&style=flat-square&color=22c55e" alt="Chrome Web Store users" />
+    </a>
+    <a href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig">
+      <img src="https://img.shields.io/chrome-web-store/rating/gnnaglpijpngbbpamicaifonnkjbicig?label=rating&style=flat-square&color=eab308" alt="Chrome Web Store rating" />
+    </a>
+  </p>
+
+  <p>
+    <a href="https://youtu.be/ivAgRwcxAH4">
+      <img src="https://img.youtube.com/vi/ivAgRwcxAH4/maxresdefault.jpg" alt="Watch the Tosly demo on YouTube" width="720" />
+    </a>
+  </p>
+
+  <p>
+    <sub><a href="#">Firefox (planned)</a> &nbsp;·&nbsp; <a href="https://github.com/preston176/tosly-chrome-extension/issues/new">Report a bug</a></sub>
+  </p>
 
 </div>
 
@@ -16,25 +47,22 @@
 
 ## Example
 
-Open Spotify's privacy policy. Tosly highlights this:
+Open Spotify's privacy policy. Tosly flags this line:
 
 > *"We may share your personal data with third-party advertising partners at our discretion."*
 
-And tells you, in plain English:
+And, next to it, shows the verdict in plain English:
 
-```
-Severity: HIGH RISK
-Category: Data Selling
-Why it matters: Your personal information is sold to other
-companies for ads. You cannot opt out by using the service.
-```
+> [!CAUTION]
+> **HIGH RISK · Data Selling**
+> Your personal info is sold to advertisers. Continuing to use the service is the opt-in: there is no way to refuse.
 
 <!-- TODO: replace with screenshot of a real flagged ToS clause -->
 <p align="center">
   <img src="docs/screenshots/example-flag.png" alt="Tosly flagging a data-selling clause on Spotify's Privacy policy" width="800" />
 </p>
 
-Same for forced arbitration clauses, auto-renewals, broad license grants, and ~40 other patterns.
+Forced arbitration, auto-renewals, broad license grants. Tosly catches ~40 patterns like this.
 
 ---
 
@@ -42,7 +70,7 @@ Same for forced arbitration clauses, auto-renewals, broad license grants, and ~4
 
 | Browser | Status |
 |---------|--------|
-| Chrome / Edge / Brave | [Chrome Web Store](#) |
+| Chrome / Edge / Brave | [Chrome Web Store](https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig) |
 | Firefox | Planned |
 | Safari | Not planned |
 
@@ -82,7 +110,7 @@ The full request payload is in [`backend/handlers/analyze.go`](backend/handlers/
 
 <!-- TODO: replace with screenshot of the popup showing severity tiers + flag list -->
 <p align="center">
-  <img src="docs/screenshots/popup.png" alt="Tosly popup showing severity tiers and detected flags" width="420" />
+  <img src="docs/screenshots/example-flag.png" alt="Tosly popup showing severity tiers and detected flags" width="420" />
 </p>
 
 The prompt is the actual product. It lives in `backend/llm/` and is the file most worth reading if you're curious how the analysis stays consistent.
@@ -126,8 +154,8 @@ go run .
 
 ```bash
 cd extension
-npm install --legacy-peer-deps
-npm run dev
+pnpm install --legacy-peer-deps
+pnpm run dev
 ```
 
 Then load `extension/build/chrome-mv3-dev` as an unpacked extension at `chrome://extensions`. The dev build talks to `http://localhost:8080`. Production is configured via `PLASMO_PUBLIC_BACKEND_URL` at build time.
