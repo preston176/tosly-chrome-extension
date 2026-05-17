@@ -11,7 +11,7 @@
 
   <p>
     <a href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig">
-      <img src="https://img.shields.io/badge/Add%20to%20Chrome-Install%20Free-0a0a0c?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Add to Chrome" height="44" />
+      <img src="https://www.gstatic.com/devrel-devsite/prod/vb114763cc2305a85e6a106d59af57ee9014c30d60a4a13753c950f0c3f9c034b/chrome/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" height="60" />
     </a>
   </p>
 
