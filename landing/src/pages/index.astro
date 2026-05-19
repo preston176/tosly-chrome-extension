@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SectionMarker from '../components/SectionMarker.astro';
 import WaveDivider from '../components/WaveDivider.astro';
+import Heading from '../components/Heading.astro';
+import AccentEm from '../components/AccentEm.astro';
 
 type Severity = 'red' | 'yellow' | 'green';
 
@@ -213,12 +215,10 @@ const severityConfig = {
 
 
     <!-- Headline -->
-    <h1 class="animate-float-up delay-100 text-center max-w-3xl">
-      <span style="font-family:'DM Sans',sans-serif; font-size:clamp(2.6rem,6vw,4.5rem); font-weight:700; line-height:1.08; letter-spacing:-0.03em; color:#0a0a0c; display:block;">
-        You clicked Accept.<br/>
-        <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400; color:#ef4444;">Without reading it.</em>
-      </span>
-    </h1>
+    <Heading as="h1" size="display" class="animate-float-up delay-100 text-center max-w-3xl block">
+      You clicked Accept.<br/>
+      <AccentEm>Without reading it.</AccentEm>
+    </Heading>
 
     <p class="animate-float-up delay-200 mt-6 text-center max-w-lg text-muted text-[1.05rem] leading-relaxed font-normal">
       Tosly scans every Terms of Service page in seconds, flags the clauses designed to hurt you, and highlights the exact text - before you agree.
@@ -395,9 +395,9 @@ const severityConfig = {
     <div class="max-w-6xl mx-auto">
       <SectionMarker number="02" label="How it works" />
       <div class="text-center mb-20">
-        <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;">
+        <Heading size="lg">
           Three steps between you<br/>and the truth
-        </h2>
+        </Heading>
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
@@ -424,10 +424,10 @@ const severityConfig = {
     <div class="max-w-6xl mx-auto">
       <SectionMarker number="03" label="Features" />
       <div class="text-center mb-20">
-        <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;">
+        <Heading size="lg">
           Built to catch what<br/>
-          <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400;">companies hide</em>
-        </h2>
+          <AccentEm tone="inherit">companies hide</AccentEm>
+        </Heading>
       </div>
 
       <div class="space-y-28">
@@ -439,10 +439,10 @@ const severityConfig = {
                 <span class="text-xs font-mono font-medium text-muted">{feat.num}</span>
                 <div class="h-px flex-1 bg-hairline"></div>
               </div>
-              <h3 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:700; letter-spacing:-0.02em; color:#0a0a0c; line-height:1.15;" class="mb-4">
+              <Heading as="h3" size="sm" class="mb-4">
                 {feat.title}<br/>
-                <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400; color:#ef4444;">{feat.accent}</em>
-              </h3>
+                <AccentEm>{feat.accent}</AccentEm>
+              </Heading>
               <p class="text-muted text-base leading-relaxed mb-7">{feat.body}</p>
               <ul class="space-y-2.5">
                 {feat.bullets.map(b => (
@@ -517,9 +517,9 @@ const severityConfig = {
   <section class="py-24 px-6 hero-glow overflow-hidden noise relative">
     <div class="max-w-4xl mx-auto text-center">
       <SectionMarker number="04" label="Risk Tiers" />
-      <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.8rem,3.5vw,2.8rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;" class="mb-14">
+      <Heading size="md" class="mb-14">
         Every flag tells you<br/>exactly how worried to be
-      </h2>
+      </Heading>
       <div class="grid md:grid-cols-3 gap-5">
         {[
           { color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)', label: 'High Risk', icon: '!', desc: 'Clauses that directly harm you - data selling, forced arbitration, unilateral changes.' },
@@ -543,7 +543,7 @@ const severityConfig = {
     <div class="max-w-2xl mx-auto">
       <SectionMarker number="05" label="FAQ" />
       <div class="text-center mb-14">
-        <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.8rem,3.5vw,2.6rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c;">Common questions</h2>
+        <Heading size="md">Common questions</Heading>
       </div>
       <div class="space-y-3">
         {[
@@ -586,10 +586,10 @@ const severityConfig = {
           <path d="M11 18L14.5 21.5L21 14" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(2rem,5vw,3.5rem); font-weight:700; letter-spacing:-0.03em; color:white; line-height:1.1;" class="mb-5">
+      <Heading size="xl" tone="white" class="mb-5">
         Stop clicking Accept<br/>
-        <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400; color:#ef4444;">blindly.</em>
-      </h2>
+        <AccentEm>blindly.</AccentEm>
+      </Heading>
       <p class="text-muted text-base mb-10 leading-relaxed">
         Install Tosly once. Understand every agreement, forever.
       </p>
