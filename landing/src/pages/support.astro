@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BackHeader from '../components/BackHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import FaqItem from '../components/FaqItem.astro';
 
 const TALLY_FORM_ID = import.meta.env.PUBLIC_TALLY_FORM_ID;
 
@@ -58,17 +59,7 @@ const faqs = [
       <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Frequently asked</h2>
       <div class="space-y-2">
         {faqs.map((faq) => (
-          <details class="group bg-white rounded-xl border border-hairline overflow-hidden">
-            <summary class="flex items-center justify-between cursor-pointer px-6 py-5 list-none">
-              <span class="font-semibold text-ink pr-6">{faq.q}</span>
-              <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45 flex-shrink-0" viewBox="0 0 16 16" fill="none">
-                <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </summary>
-            <div class="px-6 pb-6 text-body leading-relaxed">
-              {faq.a}
-            </div>
-          </details>
+          <FaqItem q={faq.q} a={faq.a} variant="solid" />
         ))}
       </div>
     </section>

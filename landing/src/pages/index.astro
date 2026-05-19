@@ -5,6 +5,7 @@ import SectionMarker from '../components/SectionMarker.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import Heading from '../components/Heading.astro';
 import AccentEm from '../components/AccentEm.astro';
+import FaqItem from '../components/FaqItem.astro';
 
 type Severity = 'red' | 'yellow' | 'green';
 
@@ -553,17 +554,7 @@ const severityConfig = {
           { q: 'Does it work on every site?', a: 'Tosly works on any publicly accessible Terms of Service or Privacy Policy page. If a site uses uncommon URL patterns, you can trigger a manual scan.' },
           { q: 'What data leaves my browser?', a: 'Only the page text and URL are sent to our backend for analysis. Results are cached for 7 days - the same page won\'t be re-analyzed unnecessarily.' },
         ].map(item => (
-          <details class="glass rounded-xl group">
-            <summary class="flex items-center justify-between px-6 py-4 cursor-pointer list-none">
-              <span class="font-medium text-ink text-sm">{item.q}</span>
-              <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45" viewBox="0 0 16 16" fill="none">
-                <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </summary>
-            <div class="px-6 pb-5 text-sm text-muted leading-relaxed border-t border-black/[0.05] pt-4">
-              {item.a}
-            </div>
-          </details>
+          <FaqItem q={item.q} a={item.a} variant="glass" />
         ))}
       </div>
     </div>

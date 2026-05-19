@@ -1,0 +1,44 @@
+---
+interface Props {
+  q: string;
+  a: string;
+  variant?: 'glass' | 'solid';
+}
+const { q, a, variant = 'solid' } = Astro.props;
+const isGlass = variant === 'glass';
+---
+
+<details class:list={[
+  'group rounded-xl',
+  isGlass ? 'variant-glass' : 'bg-white border border-hairline overflow-hidden',
+]}>
+  <summary class:list={[
+    'flex items-center justify-between cursor-pointer list-none',
+    isGlass ? 'px-6 py-4' : 'px-6 py-5',
+  ]}>
+    <span class:list={[
+      'text-ink pr-6',
+      isGlass ? 'font-medium text-sm' : 'font-semibold',
+    ]}>{q}</span>
+    <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45 flex-shrink-0" viewBox="0 0 16 16" fill="none">
+      <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </summary>
+  <div class:list={[
+    'px-6 leading-relaxed',
+    isGlass
+      ? 'pb-5 pt-4 text-sm text-muted border-t border-black/[0.05]'
+      : 'pb-6 text-body',
+  ]}>
+    {a}
+  </div>
+</details>
+
+<style>
+  details.variant-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 0, 0, 0.07);
+  }
+</style>
