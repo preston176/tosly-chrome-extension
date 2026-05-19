@@ -1,40 +1,21 @@
 ---
-import '../../styles/global.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BackHeader from '../../components/BackHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
 ---
 
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="generator" content={Astro.generator} />
-
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-  <title>Message sent - Tosly</title>
-  <meta name="description" content="Thanks for reaching out. We'll get back to you shortly." />
-  <meta name="robots" content="noindex" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-</head>
-
-<body class="bg-[#f8f8fb] text-[#0a0a0c] min-h-screen flex flex-col">
-
-  <header class="max-w-3xl mx-auto px-6 pt-12 pb-8 w-full">
-    <a href="/" class="inline-flex items-center gap-3 group">
-      <img src="/logo.png" alt="Tosly" style="height:28px; width:auto;" />
-      <span class="text-sm text-[#6b7280] group-hover:text-[#0a0a0c] transition-colors">← Back to home</span>
-    </a>
-  </header>
+<BaseLayout
+  title="Message sent - Tosly"
+  description="Thanks for reaching out. We'll get back to you shortly."
+  noIndex
+  bodyClass="bg-surface text-ink min-h-screen flex flex-col"
+>
+  <BackHeader />
 
   <main class="flex-1 max-w-3xl mx-auto px-6 pb-24 w-full flex items-center justify-center">
 
     <div class="text-center max-w-xl">
-      <div class="mx-auto mb-8 w-16 h-16 rounded-full bg-[#22c55e]/10 flex items-center justify-center">
+      <div class="mx-auto mb-8 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center">
         <svg class="w-8 h-8 text-[#16a34a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
@@ -42,7 +23,7 @@ import '../../styles/global.css';
 
       <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Message received</h1>
 
-      <p class="text-lg text-[#6b7280] leading-relaxed mb-10">
+      <p class="text-lg text-muted leading-relaxed mb-10">
         Thanks for reaching out. We read every message and reply within 24 hours.
         Check the inbox of the email address you submitted - the reply will come from there.
       </p>
@@ -50,32 +31,25 @@ import '../../styles/global.css';
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
         <a
           href="/"
-          class="inline-flex items-center justify-center gap-2 bg-[#0a0a0c] text-white rounded-full px-6 py-3 text-sm font-semibold hover:bg-[#1c1c20] transition-colors"
+          class="inline-flex items-center justify-center gap-2 bg-ink text-white rounded-full px-6 py-3 text-sm font-semibold hover:bg-ink-soft transition-colors"
         >
           Back to home
         </a>
         <a
           href="/support"
-          class="inline-flex items-center justify-center gap-2 text-sm font-semibold text-[#0a0a0c] px-6 py-3 hover:underline"
+          class="inline-flex items-center justify-center gap-2 text-sm font-semibold text-ink px-6 py-3 hover:underline"
         >
           Send another message
         </a>
       </div>
 
-      <p class="text-xs text-[#6b7280] mt-12">
+      <p class="text-xs text-muted mt-12">
         Reporting something urgent? You can also
-        <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-[#0a0a0c]">open a GitHub issue</a>.
+        <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-ink">open a GitHub issue</a>.
       </p>
     </div>
 
   </main>
 
-  <footer class="bg-[#0a0a0c] border-t border-white/[0.06] px-6 py-8">
-    <div class="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <img src="/logo.png" alt="Tosly" style="height:20px; width:auto; opacity:0.5;" />
-      <p class="text-white/60 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
-    </div>
-  </footer>
-
-</body>
-</html>
+  <SiteFooter variant="minimal" />
+</BaseLayout>

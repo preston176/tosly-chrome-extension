@@ -12,6 +12,8 @@ module.exports = {
         'surface':      '#f8f8fb',
         'surface-2':    '#f0f0f5',
         'muted':        '#6b7280',
+        'body':         '#374151',
+        'hairline':     '#e5e7eb',
       },
       fontFamily: {
         sans:    ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],

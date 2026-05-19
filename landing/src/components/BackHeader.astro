@@ -1,0 +1,14 @@
+---
+interface Props {
+  maxWidth?: 'sm' | 'md';
+}
+const { maxWidth = 'md' } = Astro.props;
+const widthClass = maxWidth === 'sm' ? 'max-w-2xl' : 'max-w-3xl';
+---
+
+<header class={`${widthClass} mx-auto px-6 pt-12 pb-8 w-full`}>
+  <a href="/" class="inline-flex items-center gap-3 group">
+    <img src="/logo.png" alt="Tosly" style="height:28px; width:auto;" />
+    <span class="text-sm text-muted group-hover:text-ink transition-colors">← Back to home</span>
+  </a>
+</header>

@@ -1,0 +1,17 @@
+---
+interface Props {
+  tone?: 'red' | 'inherit';
+}
+const { tone = 'red' } = Astro.props;
+---
+
+<em class:list={['accent-em', `accent-${tone}`]}><slot /></em>
+
+<style>
+  .accent-em {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .accent-em.accent-red { color: #ef4444; }
+</style>

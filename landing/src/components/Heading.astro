@@ -1,0 +1,51 @@
+---
+interface Props {
+  as?: 'h1' | 'h2' | 'h3';
+  size?: 'display' | 'xl' | 'lg' | 'md' | 'sm';
+  tone?: 'ink' | 'white';
+  class?: string;
+}
+
+const {
+  as: Tag = 'h2',
+  size = 'lg',
+  tone = 'ink',
+  class: className = '',
+} = Astro.props;
+---
+
+<Tag class:list={['display-heading', `size-${size}`, `tone-${tone}`, className]}>
+  <slot />
+</Tag>
+
+<style>
+  .display-heading {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .display-heading.tone-ink { color: #0a0a0c; }
+  .display-heading.tone-white { color: #ffffff; }
+
+  .display-heading.size-display {
+    font-size: clamp(2.6rem, 6vw, 4.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+  .display-heading.size-xl {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: -0.03em;
+  }
+  .display-heading.size-lg {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+  .display-heading.size-md {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  }
+  .display-heading.size-sm {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+</style>

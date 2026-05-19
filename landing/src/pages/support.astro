@@ -1,5 +1,8 @@
 ---
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BackHeader from '../components/BackHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import FaqItem from '../components/FaqItem.astro';
 
 const TALLY_FORM_ID = import.meta.env.PUBLIC_TALLY_FORM_ID;
 
@@ -35,41 +38,19 @@ const faqs = [
 ];
 ---
 
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="generator" content={Astro.generator} />
-
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-  <title>Support - Tosly</title>
-  <meta name="description" content="Get help with Tosly, the Chrome extension that reads Terms of Service for you. FAQ and contact form." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://tosly.online/support" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-</head>
-
-<body class="bg-[#f8f8fb] text-[#0a0a0c] min-h-screen">
-
-  <header class="max-w-3xl mx-auto px-6 pt-12 pb-8">
-    <a href="/" class="inline-flex items-center gap-3 group">
-      <img src="/logo.png" alt="Tosly" style="height:28px; width:auto;" />
-      <span class="text-sm text-[#6b7280] group-hover:text-[#0a0a0c] transition-colors">← Back to home</span>
-    </a>
-  </header>
+<BaseLayout
+  title="Support - Tosly"
+  description="Get help with Tosly, the Chrome extension that reads Terms of Service for you. FAQ and contact form."
+  canonical="https://tosly.online/support"
+  bodyClass="bg-surface text-ink min-h-screen"
+>
+  <BackHeader />
 
   <main class="max-w-3xl mx-auto px-6 pb-24">
 
     <section class="mb-16">
       <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Support</h1>
-      <p class="text-lg text-[#6b7280] leading-relaxed">
+      <p class="text-lg text-muted leading-relaxed">
         Most questions are answered below. If yours isn't, the form at the bottom reaches us directly - we read every one and reply within 24 hours.
       </p>
     </section>
@@ -78,24 +59,14 @@ const faqs = [
       <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Frequently asked</h2>
       <div class="space-y-2">
         {faqs.map((faq) => (
-          <details class="group bg-white rounded-xl border border-[#e5e7eb] overflow-hidden">
-            <summary class="flex items-center justify-between cursor-pointer px-6 py-5 list-none">
-              <span class="font-semibold text-[#0a0a0c] pr-6">{faq.q}</span>
-              <svg class="w-4 h-4 text-[#6b7280] transition-transform group-open:rotate-45 flex-shrink-0" viewBox="0 0 16 16" fill="none">
-                <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </summary>
-            <div class="px-6 pb-6 text-[#374151] leading-relaxed">
-              {faq.a}
-            </div>
-          </details>
+          <FaqItem q={faq.q} a={faq.a} variant="solid" />
         ))}
       </div>
     </section>
 
     <section class="mb-12">
       <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Still need help</h2>
-      <div class="bg-white rounded-2xl border border-[#e5e7eb] overflow-hidden">
+      <div class="bg-white rounded-2xl border border-hairline overflow-hidden">
         {TALLY_FORM_ID ? (
           <iframe
             src={`https://tally.so/embed/${TALLY_FORM_ID}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`}
@@ -105,26 +76,21 @@ const faqs = [
             style="height:500px; margin:0;"
           ></iframe>
         ) : (
-          <div class="p-8 text-center text-[#6b7280]">
+          <div class="p-8 text-center text-muted">
             <p class="mb-2">Support form is being configured.</p>
-            <p class="text-sm">In the meantime, please <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-[#0a0a0c]">open a GitHub issue</a>.</p>
+            <p class="text-sm">In the meantime, please <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-ink">open a GitHub issue</a>.</p>
           </div>
         )}
       </div>
 
-      <p class="text-sm text-[#6b7280] mt-6 text-center">
-        Prefer GitHub? <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-[#0a0a0c]">Open an issue</a> for technical bug reports.
+      <p class="text-sm text-muted mt-6 text-center">
+        Prefer GitHub? <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-ink">Open an issue</a> for technical bug reports.
       </p>
     </section>
 
   </main>
 
-  <footer class="bg-[#0a0a0c] border-t border-white/[0.06] px-6 py-8">
-    <div class="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <img src="/logo.png" alt="Tosly" style="height:20px; width:auto; opacity:0.5;" />
-      <p class="text-white/60 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
-    </div>
-  </footer>
+  <SiteFooter variant="minimal" />
 
   <script is:inline type="text/javascript">
     var d = document, w = "https://tally.so/widgets/embed.js", v = function () {
@@ -140,6 +106,4 @@ const faqs = [
       (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
     }
   </script>
-
-</body>
-</html>
+</BaseLayout>
