@@ -58,14 +58,14 @@ const faqs = [
       <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Frequently asked</h2>
       <div class="space-y-2">
         {faqs.map((faq) => (
-          <details class="group bg-white rounded-xl border border-[#e5e7eb] overflow-hidden">
+          <details class="group bg-white rounded-xl border border-hairline overflow-hidden">
             <summary class="flex items-center justify-between cursor-pointer px-6 py-5 list-none">
               <span class="font-semibold text-ink pr-6">{faq.q}</span>
               <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45 flex-shrink-0" viewBox="0 0 16 16" fill="none">
                 <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </summary>
-            <div class="px-6 pb-6 text-[#374151] leading-relaxed">
+            <div class="px-6 pb-6 text-body leading-relaxed">
               {faq.a}
             </div>
           </details>
@@ -75,7 +75,7 @@ const faqs = [
 
     <section class="mb-12">
       <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Still need help</h2>
-      <div class="bg-white rounded-2xl border border-[#e5e7eb] overflow-hidden">
+      <div class="bg-white rounded-2xl border border-hairline overflow-hidden">
         {TALLY_FORM_ID ? (
           <iframe
             src={`https://tally.so/embed/${TALLY_FORM_ID}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`}

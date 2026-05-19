@@ -369,7 +369,7 @@ const severityConfig = {
   </script>
 
   <!-- ── Logo strip ─────────────────────────────────────────────────────── -->
-  <section class="py-12 border-y border-[#e5e7eb] bg-white overflow-hidden">
+  <section class="py-12 border-y border-hairline bg-white overflow-hidden">
     <p class="text-center text-xs font-medium tracking-widest text-muted uppercase mb-7">
       Try it on any of these services
     </p>
@@ -407,7 +407,7 @@ const severityConfig = {
           { step: '3', title: 'Read the flags', body: 'The shield glows red, yellow, or green. Open it to see every risky clause, highlighted on the page.' },
         ].map(item => (
           <div class="glass rounded-2xl p-8 lift relative overflow-hidden noise">
-            <div class="text-[5rem] font-bold leading-none text-[#f0f0f5] absolute -top-2 -right-2 select-none" style="font-family:'JetBrains Mono',monospace;">{item.step}</div>
+            <div class="text-[5rem] font-bold leading-none text-surface-2 absolute -top-2 -right-2 select-none" style="font-family:'JetBrains Mono',monospace;">{item.step}</div>
             <div class="w-8 h-8 rounded-full bg-ink flex items-center justify-center mb-5">
               <span class="text-white text-xs font-bold">{item.step}</span>
             </div>
@@ -437,7 +437,7 @@ const severityConfig = {
             <div>
               <div class="flex items-center gap-3 mb-6">
                 <span class="text-xs font-mono font-medium text-muted">{feat.num}</span>
-                <div class="h-px flex-1 bg-[#e5e7eb]"></div>
+                <div class="h-px flex-1 bg-hairline"></div>
               </div>
               <h3 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:700; letter-spacing:-0.02em; color:#0a0a0c; line-height:1.15;" class="mb-4">
                 {feat.title}<br/>
@@ -446,8 +446,8 @@ const severityConfig = {
               <p class="text-muted text-base leading-relaxed mb-7">{feat.body}</p>
               <ul class="space-y-2.5">
                 {feat.bullets.map(b => (
-                  <li class="flex items-center gap-3 text-sm text-[#374151]">
-                    <svg class="w-4 h-4 text-[#22c55e] flex-shrink-0" viewBox="0 0 16 16" fill="none">
+                  <li class="flex items-center gap-3 text-sm text-body">
+                    <svg class="w-4 h-4 text-brand-green flex-shrink-0" viewBox="0 0 16 16" fill="none">
                       <circle cx="8" cy="8" r="7.5" stroke="#22c55e" stroke-opacity="0.3"/>
                       <path d="M5 8L7 10L11 6" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -469,7 +469,7 @@ const severityConfig = {
                         <div class="w-1.5 h-1.5 rounded-full mt-1 flex-shrink-0" style={`background:${cfg.color};`}></div>
                         <div>
                           <div class="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={`color:${cfg.color};`}>{flag.category}</div>
-                          <div class="text-[10px] text-[#374151] leading-snug">{flag.text.slice(0,70)}…</div>
+                          <div class="text-[10px] text-body leading-snug">{flag.text.slice(0,70)}…</div>
                         </div>
                       </div>
                     );
@@ -479,7 +479,7 @@ const severityConfig = {
               {i === 1 && (
                 <div class="w-full">
                   <div class="text-[10px] font-semibold uppercase tracking-widest text-muted mb-4">Highlighted on-page</div>
-                  <div class="space-y-3 text-sm text-[#374151] leading-relaxed">
+                  <div class="space-y-3 text-sm text-body leading-relaxed">
                     <p>By accessing our services you agree to be bound by these terms. <span class="rounded px-1 py-0.5" style="background:rgba(239,68,68,0.15); outline:1px solid rgba(239,68,68,0.4);">We may share your personal data with third-party advertising partners at our discretion.</span> Any disputes shall be resolved via binding arbitration.</p>
                     <p>Your account automatically <span class="rounded px-1 py-0.5" style="background:rgba(234,179,8,0.15); outline:1px solid rgba(234,179,8,0.4);">renews unless cancelled 24 hours before the billing period ends.</span></p>
                     <p><span class="rounded px-1 py-0.5" style="background:rgba(34,197,94,0.12); outline:1px solid rgba(34,197,94,0.35);">You may request deletion of your data at any time.</span> We will process the request within 30 days.</p>
@@ -496,7 +496,7 @@ const severityConfig = {
                       { label: 'Highlight quotes', on: true },
                     ].map(opt => (
                       <div class="flex items-center justify-between">
-                        <span class="text-xs text-[#374151] font-medium">{opt.label}</span>
+                        <span class="text-xs text-body font-medium">{opt.label}</span>
                         <div class="w-9 h-5 rounded-full flex items-center px-0.5" style={`background:${opt.on ? '#22c55e' : '#e5e7eb'};`}>
                           <div class={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${opt.on ? 'translate-x-4' : ''}`}></div>
                         </div>
