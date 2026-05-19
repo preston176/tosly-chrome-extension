@@ -1,5 +1,6 @@
 ---
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import SectionMarker from '../components/SectionMarker.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 
@@ -88,41 +89,20 @@ const severityConfig = {
 };
 ---
 
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="generator" content={Astro.generator} />
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-  <!-- SEO -->
-  <title>Tosly - Read Every ToS in Seconds</title>
-  <meta name="description" content="Tosly is a free Chrome extension that automatically scans Terms of Service pages, flags predatory clauses in plain English, and highlights the exact text - before you click Accept." />
-  <meta name="keywords" content="terms of service scanner, privacy policy analyzer, chrome extension, legal risk, ToS highlights" />
-  <link rel="canonical" href="https://tosly.online/" />
-
-  <!-- OG -->
-  <meta property="og:title" content="Tosly - Read Every ToS in Seconds" />
-  <meta property="og:description" content="AI-powered Chrome extension that scans Terms of Service and highlights predatory clauses before you agree to them." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://tosly.online/" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Tosly - Read Every ToS in Seconds" />
-  <meta name="twitter:description" content="AI-powered Chrome extension that flags predatory clauses in any Terms of Service." />
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-  {
+<BaseLayout
+  title="Tosly - Read Every ToS in Seconds"
+  description="Tosly is a free Chrome extension that automatically scans Terms of Service pages, flags predatory clauses in plain English, and highlights the exact text - before you click Accept."
+  keywords="terms of service scanner, privacy policy analyzer, chrome extension, legal risk, ToS highlights"
+  canonical="https://tosly.online/"
+  ogTitle="Tosly - Read Every ToS in Seconds"
+  ogDescription="AI-powered Chrome extension that scans Terms of Service and highlights predatory clauses before you agree to them."
+  ogType="website"
+  ogUrl="https://tosly.online/"
+  twitterTitle="Tosly - Read Every ToS in Seconds"
+  twitterDescription="AI-powered Chrome extension that flags predatory clauses in any Terms of Service."
+  bodyClass="overflow-x-hidden"
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Tosly",
@@ -132,8 +112,7 @@ const severityConfig = {
     "url": "https://tosly.online/",
     "installUrl": "https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-  }
-  </script>
+  })} />
 
   <style>
     /* Noise texture overlay */
@@ -194,9 +173,6 @@ const severityConfig = {
       box-shadow: 0 2px 24px rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.8) inset;
     }
   </style>
-</head>
-
-<body class="overflow-x-hidden">
 
   <!-- ── Nav ───────────────────────────────────────────────────────────── -->
   <header class="fixed top-0 left-0 right-0 z-50">
@@ -209,9 +185,9 @@ const severityConfig = {
       <!-- Nav links (center) -->
       <div class="hidden md:flex justify-center">
         <div class="glass rounded-full px-6 py-2.5 flex items-center gap-6 text-sm font-medium shadow-sm">
-          <a href="#how-it-works" class="text-[#6b7280] hover:text-[#0a0a0c] transition-colors">How it works</a>
-          <a href="#features" class="text-[#6b7280] hover:text-[#0a0a0c] transition-colors">Features</a>
-          <a href="#faq" class="text-[#6b7280] hover:text-[#0a0a0c] transition-colors">FAQ</a>
+          <a href="#how-it-works" class="text-muted hover:text-ink transition-colors">How it works</a>
+          <a href="#features" class="text-muted hover:text-ink transition-colors">Features</a>
+          <a href="#faq" class="text-muted hover:text-ink transition-colors">FAQ</a>
         </div>
       </div>
 
@@ -221,7 +197,7 @@ const severityConfig = {
           href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
           target="_blank"
           rel="noopener noreferrer"
-          class="glass rounded-full px-5 py-2.5 text-sm font-semibold text-[#0a0a0c] shadow-sm hover:bg-[#0a0a0c] transition-all duration-200 inline-flex items-center gap-2"
+          class="glass rounded-full px-5 py-2.5 text-sm font-semibold text-ink shadow-sm hover:bg-ink transition-all duration-200 inline-flex items-center gap-2"
         >
           <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
           Add to Chrome - free
@@ -244,7 +220,7 @@ const severityConfig = {
       </span>
     </h1>
 
-    <p class="animate-float-up delay-200 mt-6 text-center max-w-lg text-[#6b7280] text-[1.05rem] leading-relaxed font-normal">
+    <p class="animate-float-up delay-200 mt-6 text-center max-w-lg text-muted text-[1.05rem] leading-relaxed font-normal">
       Tosly scans every Terms of Service page in seconds, flags the clauses designed to hurt you, and highlights the exact text - before you agree.
     </p>
 
@@ -254,12 +230,12 @@ const severityConfig = {
         href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
         target="_blank"
         rel="noopener"
-        class="lift inline-flex items-center gap-2.5 bg-[#0a0a0c] text-white rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide shadow-lg hover:bg-[#1c1c20]"
+        class="lift inline-flex items-center gap-2.5 bg-ink text-white rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide shadow-lg hover:bg-ink-soft"
       >
         <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
         Add to Chrome - it's free
       </a>
-      <a href="#how-it-works" class="text-sm font-medium text-[#6b7280] hover:text-[#0a0a0c] transition-colors">
+      <a href="#how-it-works" class="text-sm font-medium text-muted hover:text-ink transition-colors">
         See how it works →
       </a>
     </div>
@@ -394,7 +370,7 @@ const severityConfig = {
 
   <!-- ── Logo strip ─────────────────────────────────────────────────────── -->
   <section class="py-12 border-y border-[#e5e7eb] bg-white overflow-hidden">
-    <p class="text-center text-xs font-medium tracking-widest text-[#6b7280] uppercase mb-7">
+    <p class="text-center text-xs font-medium tracking-widest text-muted uppercase mb-7">
       Try it on any of these services
     </p>
     <div class="relative overflow-hidden ticker-container">
@@ -404,7 +380,7 @@ const severityConfig = {
             href={co.url}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 mx-10 text-[#6b7280] hover:text-[#0a0a0c] transition-colors duration-200 cursor-pointer"
+            class="inline-flex items-center gap-2 mx-10 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
           >
             <span class="w-5 h-5 flex-shrink-0" set:html={co.svg} />
             <span class="text-sm font-semibold tracking-wide">{co.name}</span>
@@ -432,11 +408,11 @@ const severityConfig = {
         ].map(item => (
           <div class="glass rounded-2xl p-8 lift relative overflow-hidden noise">
             <div class="text-[5rem] font-bold leading-none text-[#f0f0f5] absolute -top-2 -right-2 select-none" style="font-family:'JetBrains Mono',monospace;">{item.step}</div>
-            <div class="w-8 h-8 rounded-full bg-[#0a0a0c] flex items-center justify-center mb-5">
+            <div class="w-8 h-8 rounded-full bg-ink flex items-center justify-center mb-5">
               <span class="text-white text-xs font-bold">{item.step}</span>
             </div>
-            <h3 class="text-lg font-semibold text-[#0a0a0c] mb-2">{item.title}</h3>
-            <p class="text-sm text-[#6b7280] leading-relaxed">{item.body}</p>
+            <h3 class="text-lg font-semibold text-ink mb-2">{item.title}</h3>
+            <p class="text-sm text-muted leading-relaxed">{item.body}</p>
           </div>
         ))}
       </div>
@@ -460,14 +436,14 @@ const severityConfig = {
             <!-- Text -->
             <div>
               <div class="flex items-center gap-3 mb-6">
-                <span class="text-xs font-mono font-medium text-[#6b7280]">{feat.num}</span>
+                <span class="text-xs font-mono font-medium text-muted">{feat.num}</span>
                 <div class="h-px flex-1 bg-[#e5e7eb]"></div>
               </div>
               <h3 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.6rem,3vw,2.2rem); font-weight:700; letter-spacing:-0.02em; color:#0a0a0c; line-height:1.15;" class="mb-4">
                 {feat.title}<br/>
                 <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400; color:#ef4444;">{feat.accent}</em>
               </h3>
-              <p class="text-[#6b7280] text-base leading-relaxed mb-7">{feat.body}</p>
+              <p class="text-muted text-base leading-relaxed mb-7">{feat.body}</p>
               <ul class="space-y-2.5">
                 {feat.bullets.map(b => (
                   <li class="flex items-center gap-3 text-sm text-[#374151]">
@@ -485,7 +461,7 @@ const severityConfig = {
             <div class="feat-card rounded-2xl p-6 min-h-[280px] flex items-center justify-center relative overflow-hidden noise">
               {i === 0 && (
                 <div class="w-full space-y-2 text-xs">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#6b7280] mb-4">Live scan - spotify.com</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-widest text-muted mb-4">Live scan - spotify.com</div>
                   {flags.map(flag => {
                     const cfg = severityConfig[flag.severity];
                     return (
@@ -502,7 +478,7 @@ const severityConfig = {
               )}
               {i === 1 && (
                 <div class="w-full">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#6b7280] mb-4">Highlighted on-page</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-widest text-muted mb-4">Highlighted on-page</div>
                   <div class="space-y-3 text-sm text-[#374151] leading-relaxed">
                     <p>By accessing our services you agree to be bound by these terms. <span class="rounded px-1 py-0.5" style="background:rgba(239,68,68,0.15); outline:1px solid rgba(239,68,68,0.4);">We may share your personal data with third-party advertising partners at our discretion.</span> Any disputes shall be resolved via binding arbitration.</p>
                     <p>Your account automatically <span class="rounded px-1 py-0.5" style="background:rgba(234,179,8,0.15); outline:1px solid rgba(234,179,8,0.4);">renews unless cancelled 24 hours before the billing period ends.</span></p>
@@ -512,7 +488,7 @@ const severityConfig = {
               )}
               {i === 2 && (
                 <div class="flex flex-col items-center gap-4 w-full">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-[#6b7280] mb-2">Widget settings</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-widest text-muted mb-2">Widget settings</div>
                   <div class="glass w-full max-w-xs rounded-xl p-4 space-y-3">
                     {[
                       { label: 'Auto-scan TOS pages', on: true },
@@ -527,7 +503,7 @@ const severityConfig = {
                       </div>
                     ))}
                   </div>
-                  <div class="text-[10px] text-[#6b7280] text-center">Position persists across all sites</div>
+                  <div class="text-[10px] text-muted text-center">Position persists across all sites</div>
                 </div>
               )}
             </div>
@@ -554,8 +530,8 @@ const severityConfig = {
             <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-5 text-sm font-bold" style={`background:${tier.color}20; color:${tier.color}; border:1px solid ${tier.color}40;`}>
               {tier.icon}
             </div>
-            <h3 class="font-semibold text-[#0a0a0c] mb-2">{tier.label}</h3>
-            <p class="text-sm text-[#6b7280] leading-relaxed">{tier.desc}</p>
+            <h3 class="font-semibold text-ink mb-2">{tier.label}</h3>
+            <p class="text-sm text-muted leading-relaxed">{tier.desc}</p>
           </div>
         ))}
       </div>
@@ -579,12 +555,12 @@ const severityConfig = {
         ].map(item => (
           <details class="glass rounded-xl group">
             <summary class="flex items-center justify-between px-6 py-4 cursor-pointer list-none">
-              <span class="font-medium text-[#0a0a0c] text-sm">{item.q}</span>
-              <svg class="w-4 h-4 text-[#6b7280] transition-transform group-open:rotate-45" viewBox="0 0 16 16" fill="none">
+              <span class="font-medium text-ink text-sm">{item.q}</span>
+              <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45" viewBox="0 0 16 16" fill="none">
                 <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </summary>
-            <div class="px-6 pb-5 text-sm text-[#6b7280] leading-relaxed border-t border-black/[0.05] pt-4">
+            <div class="px-6 pb-5 text-sm text-muted leading-relaxed border-t border-black/[0.05] pt-4">
               {item.a}
             </div>
           </details>
@@ -596,7 +572,7 @@ const severityConfig = {
   <WaveDivider from="#ffffff" to="#0a0a0c" variant="dramatic" height={72} />
 
   <!-- ── CTA ────────────────────────────────────────────────────────────── -->
-  <section class="pt-20 pb-28 px-6 bg-[#0a0a0c] relative overflow-hidden noise">
+  <section class="pt-20 pb-28 px-6 bg-ink relative overflow-hidden noise">
     <!-- Subtle glow -->
     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
       <div class="w-[600px] h-[300px] rounded-full" style="background:radial-gradient(ellipse, rgba(239,68,68,0.12) 0%, transparent 70%);"></div>
@@ -614,14 +590,14 @@ const severityConfig = {
         Stop clicking Accept<br/>
         <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400; color:#ef4444;">blindly.</em>
       </h2>
-      <p class="text-[#6b7280] text-base mb-10 leading-relaxed">
+      <p class="text-muted text-base mb-10 leading-relaxed">
         Install Tosly once. Understand every agreement, forever.
       </p>
       <a
         href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
         target="_blank"
         rel="noopener"
-        class="lift inline-flex items-center gap-3 bg-white text-[#0a0a0c] rounded-full px-8 py-4 text-sm font-bold tracking-wide shadow-xl"
+        class="lift inline-flex items-center gap-3 bg-white text-ink rounded-full px-8 py-4 text-sm font-bold tracking-wide shadow-xl"
       >
         <img src="/google.svg" alt="Chrome" width="18" height="18" class="flex-shrink-0" />
         Add to Chrome - free forever
@@ -631,20 +607,5 @@ const severityConfig = {
 
   </main>
 
-  <!-- ── Footer ─────────────────────────────────────────────────────────── -->
-  <footer class="bg-[#0a0a0c] border-t border-white/[0.06] px-6 py-10">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div class="flex items-center">
-        <img src="/logo.png" alt="Tosly" style="height:22px; width:auto; opacity:0.5;" />
-      </div>
-      <p class="text-white/60 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
-      <div class="flex items-center gap-5 text-xs text-white/60">
-        <a href="/support" class="hover:text-white transition-colors">Support</a>
-        <a href="/privacy" class="hover:text-white transition-colors">Privacy</a>
-        <a href="https://github.com/preston176/tosly-chrome-extension" class="hover:text-white transition-colors">GitHub</a>
-      </div>
-    </div>
-  </footer>
-
-</body>
-</html>
+  <SiteFooter variant="full" />
+</BaseLayout>

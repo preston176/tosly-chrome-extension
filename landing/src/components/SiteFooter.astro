@@ -1,0 +1,27 @@
+---
+interface Props {
+  variant?: 'minimal' | 'full';
+}
+const { variant = 'minimal' } = Astro.props;
+const isFull = variant === 'full';
+const containerWidth = isFull ? 'max-w-6xl' : 'max-w-3xl';
+const paddingY = isFull ? 'py-10' : 'py-8';
+const gap = isFull ? 'gap-6' : 'gap-4';
+const logoHeight = isFull ? '22px' : '20px';
+---
+
+<footer class={`bg-ink border-t border-white/[0.06] px-6 ${paddingY}`}>
+  <div class={`${containerWidth} mx-auto flex flex-col md:flex-row items-center justify-between ${gap}`}>
+    <div class="flex items-center">
+      <img src="/logo.png" alt="Tosly" style={`height:${logoHeight}; width:auto; opacity:0.5;`} />
+    </div>
+    <p class="text-white/60 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
+    {isFull && (
+      <div class="flex items-center gap-5 text-xs text-white/60">
+        <a href="/support" class="hover:text-white transition-colors">Support</a>
+        <a href="/privacy" class="hover:text-white transition-colors">Privacy</a>
+        <a href="https://github.com/preston176/tosly-chrome-extension" class="hover:text-white transition-colors">GitHub</a>
+      </div>
+    )}
+  </div>
+</footer>

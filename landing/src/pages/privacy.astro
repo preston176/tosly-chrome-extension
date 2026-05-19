@@ -1,28 +1,17 @@
 ---
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BackHeader from '../components/BackHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
 const lastUpdated = '2026-05-07';
 ---
 
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="generator" content={Astro.generator} />
-
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-  <title>Privacy Policy - Tosly</title>
-  <meta name="description" content="Tosly's privacy policy. What data the Tosly Chrome extension processes, why, and what we don't do." />
-  <link rel="canonical" href="https://tosly.online/privacy" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
+<BaseLayout
+  title="Privacy Policy - Tosly"
+  description="Tosly's privacy policy. What data the Tosly Chrome extension processes, why, and what we don't do."
+  canonical="https://tosly.online/privacy"
+  bodyClass="bg-surface text-ink min-h-screen"
+>
   <style>
     .prose h2 {
       font-size: 1.5rem;
@@ -59,22 +48,14 @@ const lastUpdated = '2026-05-07';
       font-size: 0.875em;
     }
   </style>
-</head>
 
-<body class="bg-[#f8f8fb] text-[#0a0a0c] min-h-screen">
-
-  <header class="max-w-3xl mx-auto px-6 pt-12 pb-8">
-    <a href="/" class="inline-flex items-center gap-3 group">
-      <img src="/logo.png" alt="Tosly" style="height:28px; width:auto;" />
-      <span class="text-sm text-[#6b7280] group-hover:text-[#0a0a0c] transition-colors">← Back to home</span>
-    </a>
-  </header>
+  <BackHeader />
 
   <main class="max-w-3xl mx-auto px-6 pb-24">
 
     <section class="mb-12">
       <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Privacy Policy</h1>
-      <p class="text-sm text-[#6b7280]">Last updated: {lastUpdated}</p>
+      <p class="text-sm text-muted">Last updated: {lastUpdated}</p>
     </section>
 
     <article class="prose">
@@ -192,12 +173,5 @@ const lastUpdated = '2026-05-07';
 
   </main>
 
-  <footer class="bg-[#0a0a0c] border-t border-white/[0.06] px-6 py-8">
-    <div class="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <img src="/logo.png" alt="Tosly" style="height:20px; width:auto; opacity:0.5;" />
-      <p class="text-white/60 text-xs">Not legal advice. Use alongside a qualified attorney for important contracts.</p>
-    </div>
-  </footer>
-
-</body>
-</html>
+  <SiteFooter variant="minimal" />
+</BaseLayout>
