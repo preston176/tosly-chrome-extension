@@ -1,0 +1,116 @@
+---
+interface Props {
+  from?: string;
+  to: string;
+  variant?: 'subtle' | 'dramatic';
+  flip?: boolean;
+  height?: number;
+  class?: string;
+}
+
+const {
+  from = 'transparent',
+  to,
+  variant = 'subtle',
+  flip = false,
+  height = 64,
+  class: className = '',
+} = Astro.props;
+
+const isDramatic = variant === 'dramatic';
+const bgColor = flip ? to : from;
+const fillColor = flip ? from : to;
+const mobileHeight = Math.max(Math.round(height * 0.55), 24);
+---
+
+<div
+  class:list={['wave-divider', { dramatic: isDramatic, flipped: flip }, className]}
+  style={`background-color:${bgColor}; --wave-h:${height}px; --wave-h-mobile:${mobileHeight}px;`}
+  aria-hidden="true"
+>
+  {isDramatic && <div class="wave-glow"></div>}
+
+  <svg
+    class="wave-svg"
+    viewBox="0 0 1440 100"
+    preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {isDramatic ? (
+      <Fragment>
+        <path
+          d="M -40,42 C 180,8 460,28 720,40 C 960,52 1220,72 1480,34 L 1480,101 L -40,101 Z"
+          fill={fillColor}
+          opacity="0.18"
+        />
+        <path
+          d="M -20,50 C 220,16 500,36 740,48 C 960,60 1200,80 1460,42 L 1460,101 L -20,101 Z"
+          fill={fillColor}
+          opacity="0.45"
+        />
+        <path
+          d="M 0,56 C 240,22 520,42 720,54 C 920,66 1160,84 1440,50 L 1440,101 L 0,101 Z"
+          fill={fillColor}
+        />
+      </Fragment>
+    ) : (
+      <path
+        d="M 0,52 C 220,16 480,42 720,54 C 960,66 1200,82 1440,46 L 1440,101 L 0,101 Z"
+        fill={fillColor}
+      />
+    )}
+  </svg>
+</div>
+
+<style>
+  .wave-divider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    height: var(--wave-h);
+  }
+  .wave-divider.dramatic {
+    height: calc(var(--wave-h) + 96px);
+  }
+  .wave-svg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--wave-h);
+    display: block;
+  }
+  .wave-divider.flipped .wave-svg {
+    bottom: auto;
+    top: 0;
+    transform: scaleY(-1);
+  }
+  .wave-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--wave-h);
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 100% at 50% 100%, rgba(239,68,68,0.08) 0%, rgba(239,68,68,0) 70%),
+      radial-gradient(ellipse 90% 50% at 50% 100%, rgba(234,179,8,0.03) 0%, rgba(234,179,8,0) 75%);
+    filter: blur(12px);
+  }
+  @media (max-width: 768px) {
+    .wave-divider {
+      height: var(--wave-h-mobile);
+    }
+    .wave-divider.dramatic {
+      height: calc(var(--wave-h-mobile) + 60px);
+    }
+    .wave-svg {
+      height: var(--wave-h-mobile);
+    }
+    .wave-divider.dramatic .wave-glow {
+      bottom: var(--wave-h-mobile);
+    }
+  }
+</style>

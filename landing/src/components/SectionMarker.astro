@@ -1,0 +1,105 @@
+---
+interface Props {
+  number?: string;
+  label: string;
+  tone?: 'default' | 'dark';
+  align?: 'center' | 'left';
+  class?: string;
+}
+
+const {
+  number,
+  label,
+  tone = 'default',
+  align = 'center',
+  class: className = '',
+} = Astro.props;
+---
+
+<div
+  class:list={['section-marker', `tone-${tone}`, `align-${align}`, className]}
+>
+  <span class="rule rule-left"></span>
+  <span class="content">
+    {number && <span class="num">{number}</span>}
+    <span class="label">{label}</span>
+  </span>
+  <span class="rule rule-right"></span>
+</div>
+
+<style>
+  .section-marker {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2.25rem;
+    width: 100%;
+  }
+  .section-marker .rule {
+    flex: 1 1 0;
+    height: 1px;
+  }
+  .section-marker .content {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.85rem;
+    white-space: nowrap;
+  }
+  .section-marker .num {
+    font-family: 'Instrument Serif', 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .section-marker .label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  /* Default tone (light bg) */
+  .section-marker.tone-default .rule {
+    background: rgba(10, 10, 12, 0.09);
+  }
+  .section-marker.tone-default .num {
+    color: #0a0a0c;
+  }
+  .section-marker.tone-default .label {
+    color: #6b7280;
+  }
+
+  /* Dark tone (CTA) */
+  .section-marker.tone-dark .rule {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .section-marker.tone-dark .num {
+    color: #ffffff;
+  }
+  .section-marker.tone-dark .label {
+    color: #ef4444;
+  }
+
+  /* Left align: shorter left rule */
+  .section-marker.align-left .rule-left {
+    flex: 0 0 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .section-marker {
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-marker .num {
+      font-size: 1.2rem;
+    }
+    .section-marker .label {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+    }
+  }
+</style>
