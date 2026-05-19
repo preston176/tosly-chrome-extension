@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"sync"
 
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/genai"
 )
 
@@ -27,7 +27,7 @@ type AnalysisResult struct {
 
 // Analyzer is the interface the handler depends on (enables test doubles).
 type Analyzer interface {
-	Analyze(text string) (AnalysisResult, error)
+	Analyze(ctx context.Context, text string) (AnalysisResult, error)
 }
 
 const chunkWordSize = 3000
@@ -87,39 +87,34 @@ func NewGeminiClient(apiKey string) (*GeminiClient, error) {
 	return &GeminiClient{client: client, model: "gemini-2.5-flash"}, nil
 }
 
-func (g *GeminiClient) Analyze(text string) (AnalysisResult, error) {
+func (g *GeminiClient) Analyze(ctx context.Context, text string) (AnalysisResult, error) {
 	chunks := ChunkText(text, chunkWordSize)
 	if len(chunks) == 0 {
 		return AnalysisResult{Severity: "green", Summary: "No text to analyze.", Flags: []Flag{}}, nil
 	}
 
 	results := make([]AnalysisResult, len(chunks))
-	errs := make([]error, len(chunks))
-	var wg sync.WaitGroup
+	group, groupCtx := errgroup.WithContext(ctx)
 
 	for i, chunk := range chunks {
-		wg.Add(1)
-		go func(i int, chunk string) {
-			defer wg.Done()
-			result, err := g.analyzeChunk(chunk)
+		i, chunk := i, chunk
+		group.Go(func() error {
+			result, err := g.analyzeChunk(groupCtx, chunk)
+			if err != nil {
+				return err
+			}
 			results[i] = result
-			errs[i] = err
-		}(i, chunk)
+			return nil
+		})
 	}
-	wg.Wait()
-
-	// Return first error encountered
-	for _, err := range errs {
-		if err != nil {
-			return AnalysisResult{}, err
-		}
+	if err := group.Wait(); err != nil {
+		return AnalysisResult{}, err
 	}
 
 	return MergeResults(results), nil
 }
 
-func (g *GeminiClient) analyzeChunk(text string) (AnalysisResult, error) {
-	ctx := context.Background()
+func (g *GeminiClient) analyzeChunk(ctx context.Context, text string) (AnalysisResult, error) {
 	prompt := fmt.Sprintf(userPromptTemplate, text)
 
 	contents := []*genai.Content{

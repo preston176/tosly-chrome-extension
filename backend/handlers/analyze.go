@@ -57,7 +57,7 @@ func (h *AnalyzeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.analyzer.Analyze(req.Text)
+	result, err := h.analyzer.Analyze(r.Context(), req.Text)
 	if err != nil {
 		http.Error(w, "analysis failed: "+err.Error(), http.StatusInternalServerError)
 		return

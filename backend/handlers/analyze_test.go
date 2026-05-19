@@ -2,6 +2,7 @@ package handlers_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -20,7 +21,7 @@ type stubAnalyzer struct {
 	calls  int
 }
 
-func (s *stubAnalyzer) Analyze(text string) (llm.AnalysisResult, error) {
+func (s *stubAnalyzer) Analyze(ctx context.Context, text string) (llm.AnalysisResult, error) {
 	s.calls++
 	return s.result, s.err
 }
