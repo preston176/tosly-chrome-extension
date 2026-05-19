@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import SectionMarker from '../components/SectionMarker.astro';
+import WaveDivider from '../components/WaveDivider.astro';
 
 type Severity = 'red' | 'yellow' | 'green';
 
@@ -233,11 +235,6 @@ const severityConfig = {
   <!-- ── Hero ──────────────────────────────────────────────────────────── -->
   <section class="hero-glow relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-6 overflow-hidden noise">
 
-    <!-- Eyebrow -->
-    <div class="animate-float-up flex items-center gap-2 mb-7 bg-white/80 border border-black/[0.07] rounded-full px-4 py-1.5 shadow-sm">
-      <span class="w-1.5 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_6px_#22c55e]" style="animation: pulse-dot 2s ease-in-out infinite;"></span>
-      <span class="text-xs font-medium text-[#6b7280] tracking-wide">Free Chrome Extension</span>
-    </div>
 
     <!-- Headline -->
     <h1 class="animate-float-up delay-100 text-center max-w-3xl">
@@ -420,8 +417,8 @@ const severityConfig = {
   <!-- ── How it works ───────────────────────────────────────────────────── -->
   <section id="how-it-works" class="py-28 px-6">
     <div class="max-w-6xl mx-auto">
+      <SectionMarker number="02" label="How it works" />
       <div class="text-center mb-20">
-        <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">How it works</span>
         <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;">
           Three steps between you<br/>and the truth
         </h2>
@@ -449,8 +446,8 @@ const severityConfig = {
   <!-- ── Features ───────────────────────────────────────────────────────── -->
   <section id="features" class="py-20 px-6 bg-white">
     <div class="max-w-6xl mx-auto">
+      <SectionMarker number="03" label="Features" />
       <div class="text-center mb-20">
-        <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">Features</span>
         <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;">
           Built to catch what<br/>
           <em style="font-family:'Instrument Serif',Georgia,serif; font-style:italic; font-weight:400;">companies hide</em>
@@ -543,7 +540,7 @@ const severityConfig = {
   <!-- ── Severity breakdown ─────────────────────────────────────────────── -->
   <section class="py-24 px-6 hero-glow overflow-hidden noise relative">
     <div class="max-w-4xl mx-auto text-center">
-      <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">Risk Tiers</span>
+      <SectionMarker number="04" label="Risk Tiers" />
       <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.8rem,3.5vw,2.8rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c; line-height:1.1;" class="mb-14">
         Every flag tells you<br/>exactly how worried to be
       </h2>
@@ -568,8 +565,8 @@ const severityConfig = {
   <!-- ── FAQ ────────────────────────────────────────────────────────────── -->
   <section id="faq" class="py-24 px-6 bg-white">
     <div class="max-w-2xl mx-auto">
+      <SectionMarker number="05" label="FAQ" />
       <div class="text-center mb-14">
-        <span class="text-xs font-semibold tracking-widest uppercase text-[#dc2626] mb-3 block">FAQ</span>
         <h2 style="font-family:'DM Sans',sans-serif; font-size:clamp(1.8rem,3.5vw,2.6rem); font-weight:700; letter-spacing:-0.025em; color:#0a0a0c;">Common questions</h2>
       </div>
       <div class="space-y-3">
@@ -596,13 +593,16 @@ const severityConfig = {
     </div>
   </section>
 
+  <WaveDivider from="#ffffff" to="#0a0a0c" variant="dramatic" height={72} />
+
   <!-- ── CTA ────────────────────────────────────────────────────────────── -->
-  <section class="py-28 px-6 bg-[#0a0a0c] relative overflow-hidden noise">
+  <section class="pt-20 pb-28 px-6 bg-[#0a0a0c] relative overflow-hidden noise">
     <!-- Subtle glow -->
     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
       <div class="w-[600px] h-[300px] rounded-full" style="background:radial-gradient(ellipse, rgba(239,68,68,0.12) 0%, transparent 70%);"></div>
     </div>
     <div class="max-w-3xl mx-auto text-center relative">
+      <SectionMarker number="06" label="Install" tone="dark" class="mb-12" />
       <div class="w-16 h-16 mx-auto mb-8 rounded-2xl flex items-center justify-center" style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2);">
         <svg width="28" height="32" viewBox="0 0 32 36" fill="none">
           <path d="M16 2L3 7V18C3 25.18 8.64 31.9 16 34C23.36 31.9 29 25.18 29 18V7L16 2Z"
