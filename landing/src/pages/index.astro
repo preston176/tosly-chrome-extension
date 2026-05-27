@@ -6,6 +6,7 @@ import WaveDivider from '../components/WaveDivider.astro';
 import Heading from '../components/Heading.astro';
 import AccentEm from '../components/AccentEm.astro';
 import FaqItem from '../components/FaqItem.astro';
+import HeroVideo from '../components/HeroVideo.tsx';
 
 type Severity = 'red' | 'yellow' | 'green';
 
@@ -179,13 +180,14 @@ const severityConfig = {
 
   <!-- ── Nav ───────────────────────────────────────────────────────────── -->
   <header class="fixed top-0 left-0 right-0 z-50">
-    <nav class="mx-auto max-w-6xl px-6 h-16 grid grid-cols-3 items-center">
-      <!-- Logo (left) -->
-      <a href="/" class="glass rounded-full px-5 py-2.5 inline-flex items-center w-max shadow-sm">
-        <img src="/logo.png" alt="Tosly" height="28" style="height:28px; width:auto;" />
+    <nav class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between md:grid md:grid-cols-3">
+      <!-- Logo + wordmark -->
+      <a href="/" class="inline-flex items-center gap-2 group">
+        <img src="/logo.png" alt="" class="h-8 w-8 rounded-full object-cover" />
+        <span class="font-bold text-ink text-base tracking-tight group-hover:opacity-80 transition-opacity">Tosly</span>
       </a>
 
-      <!-- Nav links (center) -->
+      <!-- Center nav links (desktop only) -->
       <div class="hidden md:flex justify-center">
         <div class="glass rounded-full px-6 py-2.5 flex items-center gap-6 text-sm font-medium shadow-sm">
           <a href="#how-it-works" class="text-muted hover:text-ink transition-colors">How it works</a>
@@ -194,20 +196,98 @@ const severityConfig = {
         </div>
       </div>
 
-      <!-- CTA (right) -->
-      <div class="flex justify-end">
+      <!-- Right side -->
+      <div class="flex justify-end items-center gap-2">
+        <!-- Desktop CTA -->
         <a
           href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
           target="_blank"
           rel="noopener noreferrer"
-          class="glass rounded-full px-5 py-2.5 text-sm font-semibold text-ink shadow-sm hover:bg-ink transition-all duration-200 inline-flex items-center gap-2"
+          class="hidden md:inline-flex glass rounded-full px-5 py-2.5 text-sm font-semibold text-ink shadow-sm hover:bg-ink transition-all duration-200 items-center gap-2"
+        >
+          <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
+          Add to Chrome - free
+        </a>
+
+        <!-- Mobile hamburger -->
+        <button
+          id="mobile-menu-trigger"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden glass rounded-full h-11 w-11 flex items-center justify-center shadow-sm text-ink"
+        >
+          <svg id="menu-icon-open" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M2 5H16M2 9H16M2 13H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <svg id="menu-icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none" class="hidden" aria-hidden="true">
+            <path d="M3 3L15 15M15 3L3 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu drawer -->
+    <div
+      id="mobile-menu"
+      class="md:hidden hidden px-4 sm:px-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site menu"
+    >
+      <div class="glass rounded-2xl mt-2 p-3 shadow-xl">
+        <nav class="flex flex-col">
+          <a href="#how-it-works" class="mobile-menu-link px-4 py-3 rounded-xl text-base font-medium text-ink hover:bg-black/5 transition-colors">How it works</a>
+          <a href="#features"      class="mobile-menu-link px-4 py-3 rounded-xl text-base font-medium text-ink hover:bg-black/5 transition-colors">Features</a>
+          <a href="#faq"           class="mobile-menu-link px-4 py-3 rounded-xl text-base font-medium text-ink hover:bg-black/5 transition-colors">FAQ</a>
+        </nav>
+        <a
+          href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mobile-menu-link mt-2 flex items-center justify-center gap-2 bg-ink text-white rounded-full px-5 py-3.5 text-sm font-semibold tracking-wide shadow-lg"
         >
           <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
           Add to Chrome - free
         </a>
       </div>
-    </nav>
+    </div>
   </header>
+
+  <script>
+    const trigger = document.getElementById('mobile-menu-trigger');
+    const menu    = document.getElementById('mobile-menu');
+    const iconOpen  = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+    let isOpen = false;
+
+    function setOpen(open: boolean) {
+      isOpen = open;
+      menu?.classList.toggle('hidden', !open);
+      iconOpen?.classList.toggle('hidden', open);
+      iconClose?.classList.toggle('hidden', !open);
+      trigger?.setAttribute('aria-expanded', String(open));
+      trigger?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    trigger?.addEventListener('click', () => setOpen(!isOpen));
+
+    menu?.querySelectorAll('.mobile-menu-link').forEach(link => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) setOpen(false);
+    });
+
+    // Close when crossing into desktop breakpoint
+    const mq = window.matchMedia('(min-width: 768px)');
+    mq.addEventListener('change', (e) => {
+      if (e.matches && isOpen) setOpen(false);
+    });
+  </script>
 
   <main>
 
@@ -241,7 +321,7 @@ const severityConfig = {
       </a>
     </div>
 
-    <!-- Hero Video Mockup -->
+    <!-- Hero Video -->
     <div class="animate-float-up delay-400 mt-16 w-full max-w-3xl relative">
 
       <!-- Ambient glow behind the card -->
@@ -252,122 +332,12 @@ const severityConfig = {
         z-index: 0;
       "></div>
 
-      <!-- Video thumbnail card -->
-      <div id="video-trigger" class="relative z-10 rounded-2xl overflow-hidden cursor-pointer group" style="box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);">
-
-        <!-- YouTube thumbnail -->
-        <div class="relative w-full" style="aspect-ratio:16/9;">
-          <img
-            src="https://i.ytimg.com/vi/ivAgRwcxAH4/maxresdefault.jpg"
-            alt="Watch Tosly in action"
-            class="w-full h-full object-cover"
-          />
-
-          <!-- Dark overlay - lightens on hover -->
-          <div class="absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-colors duration-300"></div>
-
-          <!-- Ambient colour bleed from thumbnail -->
-          <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 60% 60% at 50% 100%, rgba(239,68,68,0.15) 0%, transparent 70%);"></div>
-
-          <!-- Play button -->
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="relative flex items-center justify-center">
-              <!-- Pulse rings -->
-              <div class="absolute w-24 h-24 rounded-full bg-white/10 animate-ping" style="animation-duration:2s;"></div>
-              <div class="absolute w-20 h-20 rounded-full bg-white/10 animate-ping" style="animation-duration:2s; animation-delay:0.4s;"></div>
-              <!-- Play circle -->
-              <div class="relative w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
-                style="background:rgba(255,255,255,0.95); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M6 4.5L20 12L6 19.5V4.5Z" fill="#0a0a0c"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-        </div>
+      <div class="relative z-10">
+        <HeroVideo client:load />
       </div>
 
     </div>
   </section>
-
-  <!-- ── Video Modal ─────────────────────────────────────────────────────── -->
-  <div id="video-modal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8" style="display:none!important;">
-    <!-- Backdrop -->
-    <div id="modal-backdrop" class="absolute inset-0" style="background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);"></div>
-
-    <!-- Modal container -->
-    <div id="modal-content" class="relative z-10 w-full max-w-4xl" style="opacity:0; transform:scale(0.95); transition: opacity 0.25s ease, transform 0.25s ease;">
-
-      <!-- Ambient glow behind video -->
-      <div id="modal-ambient" class="absolute pointer-events-none rounded-3xl" style="
-        inset: -40px;
-        background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(239,68,68,0.25) 0%, rgba(234,179,8,0.1) 50%, transparent 70%);
-        filter: blur(40px);
-        z-index: 0;
-      "></div>
-
-      <!-- Close button -->
-      <button id="modal-close" class="absolute -top-10 right-0 text-white/60 hover:text-white transition-colors flex items-center gap-1.5 text-sm font-medium z-20">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        Close
-      </button>
-
-      <!-- iframe wrapper -->
-      <div class="relative z-10 rounded-2xl overflow-hidden" style="aspect-ratio:16/9; box-shadow: 0 40px 100px rgba(0,0,0,0.5);">
-        <iframe
-          id="yt-iframe"
-          src=""
-          title="Tosly demo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          class="w-full h-full border-0"
-        ></iframe>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const VIDEO_ID = 'ivAgRwcxAH4';
-    const trigger  = document.getElementById('video-trigger')!;
-    const modal    = document.getElementById('video-modal')!;
-    const content  = document.getElementById('modal-content')!;
-    const backdrop = document.getElementById('modal-backdrop')!;
-    const closeBtn = document.getElementById('modal-close')!;
-    const iframe   = document.getElementById('yt-iframe') as HTMLIFrameElement;
-    const ambient  = document.getElementById('modal-ambient')!;
-
-    function openModal() {
-      modal.style.cssText = '';           // clear display:none
-      modal.style.display = 'flex';
-      iframe.src = `https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&rel=0&modestbranding=1`;
-      // Animate in
-      requestAnimationFrame(() => {
-        content.style.opacity = '1';
-        content.style.transform = 'scale(1)';
-      });
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      content.style.opacity = '0';
-      content.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        modal.style.display = 'none';
-        iframe.src = '';
-        document.body.style.overflow = '';
-      }, 250);
-    }
-
-    trigger.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-  </script>
 
   <!-- ── Logo strip ─────────────────────────────────────────────────────── -->
   <section class="py-12 border-y border-hairline bg-white overflow-hidden">
