@@ -1,0 +1,42 @@
+# Production compose: Caddy (auto-HTTPS) in front of the Go backend.
+#
+# Unlike docker-compose.yml (local dev, publishes 8080 directly), here the
+# backend is NOT published to the host — only Caddy is reachable from outside,
+# on 80/443. Caddy reaches the backend over the internal network as backend:8080.
+#
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# GEMINI_API_KEY is read from a .env file sitting next to this one.
+
+services:
+  backend:
+    build: .
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - GROQ_MODEL=${GROQ_MODEL:-}
+    restart: unless-stopped
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+
+volumes:
+  caddy_data:
+  caddy_config:

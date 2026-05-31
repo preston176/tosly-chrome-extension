@@ -33,8 +33,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Build extension (production)
-        env:
-          PLASMO_PUBLIC_BACKEND_URL: https://tosly-backend.onrender.com
+        # Backend URL comes from the committed extension/.env.production
         run: npm run build
 
       - name: Package extension

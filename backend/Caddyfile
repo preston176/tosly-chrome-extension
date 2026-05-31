@@ -1,0 +1,13 @@
+# Caddy reverse proxy for the Tosly backend.
+# Caddy terminates TLS on :443 and proxies to the Go service on the internal
+# Docker network. Certificates are provisioned automatically via Let's Encrypt
+# the first time the domain resolves to this droplet.
+#
+# To get expiry notices from Let's Encrypt, uncomment and set an email:
+# {
+# 	email you@example.com
+# }
+
+api.tosly.online {
+	reverse_proxy backend:8080
+}

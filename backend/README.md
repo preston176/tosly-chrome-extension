@@ -10,6 +10,21 @@ go run .
 # → listening on :8080
 ```
 
+## LLM providers
+
+The service analyzes text through a fallback chain. **Gemini** is the primary
+provider; **Groq** (free tier) is the fallback, used automatically when Gemini
+errors (e.g. rate-limited or out of credits).
+
+| Env var | Required | Notes |
+|---------|----------|-------|
+| `GEMINI_API_KEY` | one of the two | Primary provider (`gemini-2.5-flash`). |
+| `GROQ_API_KEY` | one of the two | Fallback provider. Free key at [console.groq.com](https://console.groq.com). |
+| `GROQ_MODEL` | no | Overrides the Groq model. Default: `llama-3.3-70b-versatile`. |
+
+At least one key must be set. With both set, requests try Gemini first and fall
+back to Groq on failure. Provider order is logged at startup.
+
 ## Endpoints
 
 ### `GET /health`
