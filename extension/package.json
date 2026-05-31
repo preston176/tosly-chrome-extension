@@ -1,7 +1,7 @@
 {
   "name": "tosly",
   "displayName": "Tosly",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Reads Terms of Service with AI and flags clauses that work against you - data selling, arbitration, auto-renewals.",
   "author": "Tosly",
   "scripts": {
