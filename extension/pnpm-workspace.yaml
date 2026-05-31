@@ -1,0 +1,10 @@
+# pnpm 11+ reads build-script approvals here (no longer from package.json's
+# "pnpm" field). Plasmo's bundler needs these native deps to run their install
+# scripts: sharp (icon generation), lmdb/esbuild/swc (Parcel build), etc.
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true
+  sharp: true
