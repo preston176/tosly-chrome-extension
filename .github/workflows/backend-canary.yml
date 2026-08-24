@@ -1,0 +1,93 @@
+# Daily production canary.
+#
+# The backend went down on 2026-08-16 when Groq retired llama-3.3-70b-versatile
+# for free-tier keys. Nothing deployed that day, so the deploy-time smoke test
+# would not have caught it — the failure happened to a running system. Gemini
+# had already been failing silently before that (llm.Chain logs a fallback and
+# moves on), so Groq was quietly carrying all traffic until it too went away.
+#
+# This job exercises the real analysis path once a day and opens a GitHub issue
+# when it breaks, so the next outage surfaces in hours instead of months.
+#
+# NOTE: GitHub disables scheduled workflows in repos with no pushes for 60 days.
+# If the project goes quiet again, re-enable this from the Actions tab.
+
+name: Backend Canary
+
+on:
+  schedule:
+    - cron: '17 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe /analyze
+        id: probe
+        run: |
+          # Unique host per run: the backend caches by hostname, so a fixed
+          # probe URL would be answered from cache and assert nothing.
+          PROBE_HOST="canary-${GITHUB_RUN_ID}.tosly-ci.invalid"
+          BODY=$(jq -n --arg url "https://${PROBE_HOST}/terms" '{
+            url: $url,
+            text: "By using this Service you agree that we may sell or share your personal information with third-party advertising partners at our sole discretion. You waive your right to a jury trial and agree to binding individual arbitration. Your subscription renews automatically each year and we are not required to remind you."
+          }')
+
+          HTTP=$(curl -sS -m 120 -o /tmp/canary.json -w '%{http_code}' \
+            -X POST https://api.tosly.online/analyze \
+            -H 'Content-Type: application/json' -d "$BODY" || echo 000)
+
+          echo "http=$HTTP" >> "$GITHUB_OUTPUT"
+
+          if [ "$HTTP" != "200" ]; then
+            echo "detail=HTTP $HTTP: $(head -c 500 /tmp/canary.json 2>/dev/null)" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          if ! jq -e '(.severity | IN("red","yellow","green")) and (.flags | type == "array")' /tmp/canary.json > /dev/null; then
+            echo "detail=200 but malformed payload: $(head -c 500 /tmp/canary.json)" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          echo "canary OK — severity=$(jq -r .severity /tmp/canary.json), flags=$(jq '.flags | length' /tmp/canary.json)"
+
+      - name: Open issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DETAIL: ${{ steps.probe.outputs.detail }}
+        run: |
+          # Don't pile up a new issue every day the backend is down.
+          EXISTING=$(gh issue list --label canary --state open --limit 1 --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            echo "canary issue #$EXISTING already open — not filing a duplicate"
+            exit 0
+          fi
+          gh label create canary --color b60205 --description "Automated production canary failure" 2>/dev/null || true
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          {
+            echo "The daily canary could not get a valid analysis out of \`https://api.tosly.online/analyze\`."
+            echo
+            echo '```'
+            echo "$DETAIL"
+            echo '```'
+            echo
+            echo "**Most likely causes, in order:**"
+            echo
+            echo "1. An LLM provider retired a model. Check [Groq deprecations](https://console.groq.com/docs/deprecations) and [Gemini models](https://ai.google.dev/gemini-api/docs/models). Recover without a code deploy by setting \`GROQ_MODEL\` in \`/opt/tosly-backend/.env\` on the server, then \`docker compose -f docker-compose.prod.yml up -d\`."
+            echo "2. \`GEMINI_API_KEY\` expired, was revoked, or hit its quota."
+            echo "3. The server is out of disk or memory (the in-memory cache is unbounded)."
+            echo
+            echo "Triage: ssh to the server, then \`cd /opt/tosly-backend && docker compose -f docker-compose.prod.yml logs --tail=100 backend\`. The startup line \`LLM providers (fallback order): ...\` shows which providers are actually configured."
+            echo
+            echo "_Filed automatically by backend-canary.yml — [run log]($RUN_URL)._"
+          } > /tmp/issue-body.md
+          gh issue create \
+            --title "Backend canary failing: /analyze is down" \
+            --label canary \
+            --body-file /tmp/issue-body.md
