@@ -22,34 +22,73 @@ jobs:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.DROPLET_SSH_KEY }}" > ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "${{ secrets.DROPLET_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Sync backend to droplet
+      - name: Sync backend to server
         run: |
           rsync -az --delete \
             --exclude '.env' \
             --exclude '.DS_Store' \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
             backend/ \
-            "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}:/opt/tosly-backend/"
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/tosly-backend/"
 
       - name: Rebuild and restart
         run: |
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
-            "${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_HOST }}" \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             'cd /opt/tosly-backend && docker compose -f docker-compose.prod.yml up -d --build && docker image prune -f'
 
-      - name: Health check
+      - name: Wait for backend to come up
         run: |
           for i in $(seq 1 10); do
-            if curl -fsS https://api.tosly.online/health; then
-              echo " — backend healthy"
-              exit 0
-            fi
-            echo "waiting for backend to come up... ($i/10)"
+            curl -fsS https://api.tosly.online/health && echo " — container up" && exit 0
+            echo "waiting for backend... ($i/10)"
             sleep 3
           done
-          echo "health check failed after restart"
+          echo "::error::backend did not come up after restart"
           exit 1
+
+      - name: Smoke test /analyze
+        run: |
+          # /health is a hardcoded "ok" and cannot detect a broken LLM provider —
+          # that is how the Groq free-tier retirement on 2026-08-16 took prod down
+          # unnoticed. This step exercises the real analysis path instead.
+          #
+          # The backend caches by HOSTNAME, so the probe host is unique per run;
+          # a fixed one would return a cached result and assert nothing.
+          PROBE_HOST="smoke-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.tosly-ci.invalid"
+          BODY=$(jq -n --arg url "https://${PROBE_HOST}/terms" '{
+            url: $url,
+            text: "By using this Service you agree that we may sell or share your personal information with third-party advertising partners at our sole discretion. You waive your right to a jury trial and agree to binding individual arbitration. Your subscription renews automatically each year and we are not required to remind you."
+          }')
+
+          for i in $(seq 1 5); do
+            HTTP=$(curl -sS -m 120 -o /tmp/smoke.json -w '%{http_code}' \
+              -X POST https://api.tosly.online/analyze \
+              -H 'Content-Type: application/json' -d "$BODY" || echo 000)
+            [ "$HTTP" = "200" ] && break
+            echo "attempt $i/5: HTTP $HTTP"; cat /tmp/smoke.json 2>/dev/null; echo
+            sleep 10
+          done
+
+          if [ "$HTTP" != "200" ]; then
+            echo "::error::/analyze returned HTTP $HTTP — LLM providers are not working"
+            cat /tmp/smoke.json 2>/dev/null
+            exit 1
+          fi
+
+          # Shape assertions: a 200 with junk JSON is still a broken deploy.
+          jq -e '
+            (.severity | IN("red","yellow","green")) and
+            (.summary | type == "string" and length > 0) and
+            (.flags | type == "array")
+          ' /tmp/smoke.json > /dev/null || {
+              echo "::error::/analyze returned 200 but the payload is malformed"
+              cat /tmp/smoke.json
+              exit 1
+            }
+
+          echo "/analyze healthy — severity=$(jq -r .severity /tmp/smoke.json), flags=$(jq '.flags | length' /tmp/smoke.json)"

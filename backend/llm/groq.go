@@ -13,8 +13,13 @@ import (
 
 const (
 	groqEndpoint = "https://api.groq.com/openai/v1/chat/completions"
-	// defaultGroqModel is a capable model available on Groq's free tier.
-	defaultGroqModel = "llama-3.3-70b-versatile"
+	// defaultGroqModel is a capable model available on Groq's free/developer
+	// tier. Groq retires models on a schedule (llama-3.3-70b-versatile, the
+	// previous default, lost free-tier access on 2026-08-16), so when analysis
+	// starts failing with a 404 "model_not_found", check
+	// https://console.groq.com/docs/deprecations and either bump this constant
+	// or set GROQ_MODEL to override it without a code change.
+	defaultGroqModel = "openai/gpt-oss-120b"
 	groqTimeout      = 60 * time.Second
 )
 

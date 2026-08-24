@@ -20,7 +20,7 @@ errors (e.g. rate-limited or out of credits).
 |---------|----------|-------|
 | `GEMINI_API_KEY` | one of the two | Primary provider (`gemini-2.5-flash`). |
 | `GROQ_API_KEY` | one of the two | Fallback provider. Free key at [console.groq.com](https://console.groq.com). |
-| `GROQ_MODEL` | no | Overrides the Groq model. Default: `llama-3.3-70b-versatile`. |
+| `GROQ_MODEL` | no | Overrides the Groq model. Default: `openai/gpt-oss-120b`. Set this to recover from a Groq model retirement without a code deploy. |
 
 At least one key must be set. With both set, requests try Gemini first and fall
 back to Groq on failure. Provider order is logged at startup.
