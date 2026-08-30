@@ -1,0 +1,40 @@
+---
+/* Iris-tinted settings panel. */
+const toggles = [
+  { label: 'Auto-scan ToS pages', on: true },
+  { label: 'Cache results (7 days)', on: true },
+  { label: 'Highlight in page', on: true },
+  { label: 'Share usage analytics', on: false },
+];
+---
+<div class="mock mock-iris p-3 sm:p-4 text-[0.7rem] font-mono select-none">
+  <div class="flex items-center justify-between pb-2.5 mb-3 border-b mock-rule">
+    <span class="font-sans font-semibold text-[0.78rem]">Settings</span>
+    <span class="opacity-60">LOCAL ONLY</span>
+  </div>
+
+  <div class="space-y-2.5">
+    {toggles.map((t) => (
+      <div class="flex items-center justify-between gap-3">
+        <span class="font-sans">{t.label}</span>
+        <span
+          class="w-7 h-4 shrink-0 flex items-center px-[2px]"
+          style={t.on ? 'background:#7c5ac4; justify-content:flex-end' : 'background:rgba(57,30,126,.18)'}
+        >
+          <span class="w-3 h-3 bg-white block"></span>
+        </span>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-3 pt-2.5 border-t mock-rule space-y-1.5">
+    <div class="flex items-center gap-1.5">
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+        <rect x="2" y="5" width="8" height="5.5" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M4 5V3.6a2 2 0 0 1 4 0V5" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+      <span class="font-sans">No account. No sign-in.</span>
+    </div>
+    <div class="mock-line" style="width:74%"></div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+---
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  eyebrow?: string;
+  tone?: 'flame' | 'lime' | 'sun' | 'azure' | 'rose' | 'iris' | 'plain';
+  align?: 'center' | 'left';
+  lede?: string;
+  ledeWidth?: string;
+  class?: string;
+}
+const {
+  eyebrow,
+  tone = 'flame',
+  align = 'center',
+  lede,
+  ledeWidth = 'max-w-[42rem]',
+  class: cls = '',
+} = Astro.props;
+
+const isCentered = align === 'center';
+---
+<div class={`${isCentered ? 'text-center flex flex-col items-center' : ''} ${cls}`}>
+  {eyebrow && <Eyebrow tone={tone} class="mb-5">{eyebrow}</Eyebrow>}
+
+  <h2 class={`text-d2 text-navy ${isCentered ? 'max-w-[54rem]' : 'max-w-[34rem]'}`}>
+    <slot />
+  </h2>
+
+  {lede && (
+    <p class={`mt-5 text-copy text-navy/75 ${ledeWidth}`} set:html={lede} />
+  )}
+
+  <slot name="cta" />
+</div>

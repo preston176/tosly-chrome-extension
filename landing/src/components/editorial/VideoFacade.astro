@@ -1,0 +1,61 @@
+---
+/*
+  Click-to-play YouTube facade. Ships a local copy of the video's own YouTube
+  thumbnail and no player until the visitor asks for one, so the hero costs one
+  image instead of an embed and nothing reaches YouTube on page load. The v1 hero
+  did this with React plus framer-motion (~317KB); same affordance in ~20 lines.
+
+  The thumbnail carries its own pillarbox bars and burned-in captions, which is
+  intentional: it is the real frame from the real demo.
+*/
+interface Props {
+  id: string;
+  title: string;
+  poster: string;
+  class?: string;
+}
+const { id, title, poster, class: cls = '' } = Astro.props;
+---
+<div class={`relative ${cls}`}>
+  <button
+    type="button"
+    class="video-facade group relative block w-full text-left"
+    data-video-id={id}
+    aria-label={`Play: ${title}`}
+  >
+    <img
+      src={poster}
+      alt=""
+      width="1280"
+      height="720"
+      class="w-full h-auto block border border-navy/20 shadow-[0_24px_60px_-20px_rgba(0,6,61,0.4)]"
+    />
+
+    <span class="absolute inset-0 grid place-items-center">
+      <span class="flex items-center gap-3 bg-flame-600 text-white pl-4 pr-5 py-3 shadow-[0_10px_30px_-8px_rgba(0,6,61,0.5)] transition-transform duration-200 group-hover:scale-[1.04]">
+        <svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor" aria-hidden="true">
+          <path d="M1 1.8v14.4a1 1 0 0 0 1.53.85l11.4-7.2a1 1 0 0 0 0-1.7L2.53.95A1 1 0 0 0 1 1.8Z" />
+        </svg>
+        <span class="text-copy font-medium">Watch a 40-second scan</span>
+      </span>
+    </span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.video-facade').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.videoId;
+      if (!id) return;
+      const frame = document.createElement('iframe');
+      // nocookie host: no YouTube tracking cookie set for viewers who never play.
+      frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+      frame.title = btn.getAttribute('aria-label')?.replace(/^Play: /, '') ?? 'Video';
+      frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture';
+      frame.allowFullscreen = true;
+      frame.className = 'w-full aspect-video block border border-navy/20';
+      btn.replaceWith(frame);
+      frame.focus();
+    });
+  });
+</script>

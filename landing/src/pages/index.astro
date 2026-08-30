@@ -1,572 +1,614 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import SectionMarker from '../components/SectionMarker.astro';
-import WaveDivider from '../components/WaveDivider.astro';
-import Heading from '../components/Heading.astro';
-import AccentEm from '../components/AccentEm.astro';
-import FaqItem from '../components/FaqItem.astro';
-import HeroVideo from '../components/HeroVideo.tsx';
+import EditorialLayout from '../layouts/EditorialLayout.astro';
+import Nav from '../components/editorial/Nav.astro';
+import Footer from '../components/editorial/Footer.astro';
+import Eyebrow from '../components/editorial/Eyebrow.astro';
+import Btn from '../components/editorial/Btn.astro';
+import ArrowRight from '../components/editorial/ArrowRight.astro';
+import SectionHead from '../components/editorial/SectionHead.astro';
+import PixelFrame from '../components/editorial/PixelFrame.astro';
+import WhyAccordion from '../components/editorial/WhyAccordion.astro';
+import AudienceTabs from '../components/editorial/AudienceTabs.astro';
+import FaqList from '../components/editorial/FaqList.astro';
+import Shot from '../components/editorial/Shot.astro';
+import VideoFacade from '../components/editorial/VideoFacade.astro';
+import MockPrivacy from '../components/editorial/mock/MockPrivacy.astro';
 
-type Severity = 'red' | 'yellow' | 'green';
+const STORE = 'https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig';
+const REPO  = 'https://github.com/preston176/tosly-chrome-extension';
 
-const flags: { severity: Severity; category: string; text: string }[] = [
-  { severity: 'red',    category: 'Data Selling',        text: 'We may share your personal data with third-party advertising partners at our discretion.' },
-  { severity: 'yellow', category: 'Auto-Renewal',         text: 'Your subscription renews automatically unless cancelled 24 hours before the billing date.' },
-  { severity: 'red',    category: 'Arbitration Clause',   text: 'You waive your right to participate in class-action lawsuits.' },
-  { severity: 'green',  category: 'Data Deletion',        text: 'You may request complete deletion of your account and associated data at any time.' },
-  { severity: 'yellow', category: 'Price Changes',        text: 'We reserve the right to modify pricing with 30 days notice via email.' },
-];
-
+/* Sites whose policies Tosly reads (logo row) */
 const companies = [
   {
     name: 'Spotify',
     url: 'https://www.spotify.com/legal/privacy-policy/',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>`
   },
   {
     name: 'Dropbox',
     url: 'https://www.dropbox.com/privacy',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 1.5L0 5.25l6 3.75 6-3.75L6 1.5zm12 0l-6 3.75 6 3.75 6-3.75L18 1.5zM0 12.75L6 16.5l6-3.75-6-3.75-6 3.75zm18-3.75l-6 3.75 6 3.75 6-3.75-6-3.75zM6 17.625L12 21.375l6-3.75-6-3.75-6 3.75z"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 1.5L0 5.25l6 3.75 6-3.75L6 1.5zm12 0l-6 3.75 6 3.75 6-3.75L18 1.5zM0 12.75L6 16.5l6-3.75-6-3.75-6 3.75zm18-3.75l-6 3.75 6 3.75 6-3.75-6-3.75zM6 17.625L12 21.375l6-3.75-6-3.75-6 3.75z"/></svg>`
   },
   {
     name: 'Notion',
     url: 'https://www.notion.so/Privacy-Policy-3468d120cf614d4c9014c09f6adc9091',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg>`
   },
   {
     name: 'GitHub',
     url: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`
   },
   {
     name: 'Figma',
     url: 'https://www.figma.com/legal/privacy/',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.354-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 10.979c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117v-6.038H8.148zm8.704 9.509c0 2.476-2.014 4.49-4.49 4.49s-4.49-2.014-4.49-4.49 2.014-4.49 4.49-4.49 4.49 2.014 4.49 4.49zm-1.471 0c0-1.665-1.354-3.019-3.019-3.019s-3.019 1.354-3.019 3.019 1.354 3.019 3.019 3.019 3.019-1.354 3.019-3.019z"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.354-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 10.979c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117v-6.038H8.148zm8.704 9.509c0 2.476-2.014 4.49-4.49 4.49s-4.49-2.014-4.49-4.49 2.014-4.49 4.49-4.49 4.49 2.014 4.49 4.49zm-1.471 0c0-1.665-1.354-3.019-3.019-3.019s-3.019 1.354-3.019 3.019 1.354 3.019 3.019 3.019 3.019-1.354 3.019-3.019z"/></svg>`
   },
   {
     name: 'Linear',
     url: 'https://linear.app/privacy',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 14.347l9.653 9.653a12.011 12.011 0 01-9.653-9.653zM0 10.46L13.54 24a12.045 12.045 0 01-2.427.223A12.01 12.01 0 010 12c0-.52.034-1.03.099-1.54zm22.133 9.312L4.228 1.867a12.01 12.01 0 0117.905 17.905zm-19.862-.379L1.007 17.13A12.016 12.016 0 010 12C0 5.373 5.373 0 12 0c1.842 0 3.583.42 5.13 1.007L2.271 19.393z"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 14.347l9.653 9.653a12.011 12.011 0 01-9.653-9.653zM0 10.46L13.54 24a12.045 12.045 0 01-2.427.223A12.01 12.01 0 010 12c0-.52.034-1.03.099-1.54zm22.133 9.312L4.228 1.867a12.01 12.01 0 0117.905 17.905zm-19.862-.379L1.007 17.13A12.016 12.016 0 010 12C0 5.373 5.373 0 12 0c1.842 0 3.583.42 5.13 1.007L2.271 19.393z"/></svg>`
   },
   {
     name: 'Vercel',
     url: 'https://vercel.com/legal/privacy-policy',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>`
   },
   {
     name: 'Stripe',
     url: 'https://stripe.com/privacy',
-    svg: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>`
+    svg: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>`
   },
 ];
 
+/* ── How it works ──────────────────────────────────────────────────────── */
+const steps = [
+  {
+    title: 'Scan',
+    tone: 'lime',
+    body: 'Every Terms of Service page gets read the moment it loads.',
+    href: '#why',
+  },
+  {
+    title: 'Flag',
+    tone: 'flame',
+    body: 'Every clause that earns a flag, ranked red, yellow or green.',
+    href: '#catalogue',
+  },
+  {
+    title: 'Highlight',
+    tone: 'azure',
+    body: 'The exact sentence, marked on the actual page.',
+    href: '#why',
+  },
+] as const;
 
-const features = [
-  {
-    num: '01',
-    title: 'Reads the fine print',
-    accent: 'so you don\'t have to',
-    body: 'Tosly\'s AI scans every clause the moment you land on a ToS page - before you click accept.',
-    bullets: ['Detects 40+ predatory clause types', 'Reads legal language others skip', 'Works on any site, automatically'],
-  },
-  {
-    num: '02',
-    title: 'Highlights exactly',
-    accent: 'what matters',
-    body: 'No summaries hidden in a popup. The actual text gets highlighted, colour-coded by severity, right on the page.',
-    bullets: ['Red, yellow, green severity tiers', 'Verbatim quotes from the document', 'Navigate between flags instantly'],
-  },
-  {
-    num: '03',
-    title: 'Zero friction,',
-    accent: 'total control',
-    body: 'Toggle auto-scan on or off. The shield widget lives wherever you drag it. Results cached for 7 days.',
-    bullets: ['Auto-scan TOS pages on load', 'Draggable, persistent widget', '7-day intelligent cache'],
-  },
-];
-
-const severityConfig = {
-  red:    { label: 'HIGH RISK', color: '#ef4444', bg: 'rgba(239,68,68,0.08)',   border: 'rgba(239,68,68,0.2)' },
-  yellow: { label: 'CAUTION',   color: '#eab308', bg: 'rgba(234,179,8,0.08)',   border: 'rgba(234,179,8,0.2)' },
-  green:  { label: 'CLEAR',     color: '#22c55e', bg: 'rgba(34,197,94,0.08)',   border: 'rgba(34,197,94,0.2)' },
+const stepBg: Record<string, string> = {
+  lime: 'bg-lime-300', flame: 'bg-flame-300', azure: 'bg-azure-300',
 };
+
+/* ── Why people keep it installed ──────────────────────────────────────── */
+const whyItems = [
+  {
+    title: 'Catch the clauses written to be skipped',
+    badge: 'NEW',
+    body: 'Arbitration waivers, third-party sharing, data selling, deletion rights you do not have. Tosly names the clauses that only matter after something goes wrong, before you agree to them.',
+    cta: 'See what it catches',
+    href: '#catalogue',
+  },
+  {
+    title: 'Severity you can read at a glance',
+    body: 'Three tiers, no score to interpret. Red can cost you money or rights, yellow is worth reading, green is the document doing something in your favour. Two models review every page and the higher severity wins.',
+    cta: 'How tiers are assigned',
+    href: '#faq',
+  },
+  {
+    title: 'Highlights on the page, not buried in a popup',
+    body: 'Summaries are easy to write and easy to be wrong about. Tosly marks the verbatim sentence in the document and puts the plain-English reading right beside it, so you can check its work.',
+    cta: 'See a highlight',
+    href: '#why',
+  },
+  {
+    title: 'A widget that stays where you put it',
+    body: 'Drag it anywhere and it remembers. Turn auto-scan off and it waits to be asked. Results cache for seven days, so revisiting a page costs nothing.',
+    cta: 'Widget behaviour',
+    href: '#faq',
+  },
+  {
+    title: 'Private by default, permanently',
+    body: 'No account and no sign-in. Only the page text and its URL are sent for analysis; settings and cached results live in your browser profile.',
+    cta: 'Read the privacy policy',
+    href: '/privacy',
+  },
+];
+
+/* ── Flag specimens (bento) ────────────────────────────────────────────── */
+const specimens = [
+  {
+    tier: 'HIGH RISK',
+    tierBg: 'bg-flame-600',
+    tierText: 'text-white',
+    category: 'Data Selling',
+    text: 'We may share your personal data with third-party advertising partners at our discretion.',
+  },
+  {
+    tier: 'HIGH RISK',
+    tierBg: 'bg-flame-600',
+    tierText: 'text-white',
+    category: 'Arbitration',
+    text: 'You waive your right to participate in class-action lawsuits or class-wide arbitration.',
+  },
+  {
+    tier: 'CAUTION',
+    tierBg: 'bg-sun-700',
+    tierText: 'text-navy',
+    category: 'Auto-Renewal',
+    text: 'Your subscription renews automatically unless cancelled 24 hours before the billing date.',
+  },
+];
+
+const stats = [
+  { figure: '2',      caption: 'models review every page', bg: 'bg-lime-300',  fg: 'text-lime-800' },
+  { figure: '7 days', caption: 'cached in your browser',              bg: 'bg-azure-300', fg: 'text-azure-700' },
+  { figure: '0',      caption: 'accounts or trackers',                  bg: 'bg-sun-500',   fg: 'text-navy' },
+];
+
+/* Categories the analyzer actually returns (backend/llm, extension content script). */
+const realCategories = [
+  'Third-Party Sharing', 'Data Selling', 'Data Deletion Rights',
+  'Auto-Renewal', 'Arbitration',
+];
+
+/* ── Audiences ─────────────────────────────────────────────────────────── */
+const audiences = [
+  {
+    tab: 'Shoppers',
+    tone: 'flame' as const,
+    title: 'Know the return policy before the card details',
+    body: 'Checkout pages are where restocking fees, non-refundable windows and forced-renewal terms hide. Tosly reads them while the cart is still open.',
+    bullets: ['Refund and restocking clauses', 'Auto-renewal and trial traps', 'Dispute and chargeback limits'],
+    specimen: { tier: 'CAUTION', category: 'Auto-Renewal', text: 'Your subscription renews automatically unless cancelled 24 hours before the billing date.' },
+  },
+  {
+    tab: 'Freelancers',
+    tone: 'azure' as const,
+    title: 'Spot the IP assignment on page nine',
+    body: 'Platform terms routinely claim broad licences over work you upload. Tosly surfaces ownership and licence language instead of leaving it to a search box.',
+    bullets: ['IP assignment and licence grants', 'Payment hold and clawback terms', 'Unilateral termination rights'],
+    specimen: { tier: 'HIGH RISK', category: 'Arbitration', text: 'You waive your right to participate in class-action lawsuits or class-wide arbitration.' },
+  },
+  {
+    tab: 'Parents',
+    tone: 'lime' as const,
+    title: 'Check what an app collects from a child',
+    body: 'Before a game goes on a family tablet, find out what leaves it. Tosly flags data collection, profiling and third-party sharing in plain language.',
+    bullets: ['Data collection and profiling', 'Third-party sharing', 'Deletion and access rights'],
+    specimen: { tier: 'HIGH RISK', category: 'Third-Party Sharing', text: 'We may share your personal data with third-party advertising partners at our discretion.' },
+  },
+  {
+    tab: 'Developers',
+    tone: 'iris' as const,
+    title: 'Read the API terms you are about to depend on',
+    body: 'Rate limits are documented. The right to revoke access, change pricing, or train on your data usually is not, at least not where you would look.',
+    bullets: ['Revocation and deprecation rights', 'Data and model training clauses', 'Liability caps and indemnities'],
+    specimen: { tier: 'CAUTION', category: 'Data Selling', text: 'We reserve the right to modify pricing and access limits at any time with notice by email.' },
+  },
+  {
+    tab: 'Job seekers',
+    tone: 'sun' as const,
+    title: 'Read the non-compete before the offer letter',
+    body: 'Employment portals and contractor agreements carry restrictive covenants. Tosly names them so you can negotiate rather than discover them later.',
+    bullets: ['Non-compete and non-solicit scope', 'Confidentiality overreach', 'Arbitration and venue clauses'],
+    specimen: { tier: 'CLEAR', category: 'Data Deletion Rights', text: 'You may request complete deletion of your account and associated data at any time.' },
+  },
+];
+
+/* ── Resources ─────────────────────────────────────────────────────────── */
+/*
+  Each card previews its own destination, captured from the live page rather than
+  standing in for it with a colour block. 1000x400 captures match the card's
+  2.5:1 box, so nothing is cropped.
+*/
+const resources = [
+  { title: 'Chrome Web Store', body: 'Install Tosly, read reviews, see release notes.', href: STORE,      img: '/img/link-store.jpg',   external: true },
+  { title: 'Source code',      body: 'The extension is open. Read it, fork it, audit it.', href: REPO,     img: '/img/link-source.jpg',  external: true },
+  { title: 'Get support',      body: 'Something missed? Tell us which clause and where.', href: '/support', img: '/img/link-support.jpg', external: false },
+  { title: 'Privacy policy',   body: 'Exactly what is sent, stored, and for how long.',   href: '/privacy', img: '/img/link-privacy.jpg', external: false },
+];
+
+/* ── FAQ ───────────────────────────────────────────────────────────────── */
+const faqs = [
+  {
+    q: 'How is this different from pasting the terms into ChatGPT?',
+    a: 'Two things. Tosly runs on its own, on the page you are already on, so there is no copy-paste step to skip. And it highlights the verbatim sentence rather than handing back a summary you cannot check. A summary that is subtly wrong is worse than no summary.',
+  },
+  {
+    q: 'Does Tosly send my browsing history anywhere?',
+    a: 'No. Document text is sent for analysis when a scan runs, and results are cached in your browser profile for seven days. There is no account, no sign-in, and no background tracking of pages you visit. Auto-scan can be switched off entirely.',
+  },
+  {
+    q: 'What counts as a high-risk clause?',
+    a: 'Anything that transfers money, rights, or recourse away from you without a clear trade: arbitration requirements, class-action waivers, unilateral pricing changes, data resale to third parties, and broad IP assignment. Caution covers terms you should read but that are common and negotiable. Clear marks terms in your favour, such as an unconditional deletion right.',
+  },
+  {
+    q: 'Is this legal advice?',
+    a: 'No. Tosly tells you what a document says and which parts tend to matter. For anything consequential, a contract, an employment agreement, a dispute, talk to a qualified attorney.',
+  },
+  {
+    q: 'Which sites does it work on?',
+    a: 'Any page with terms on it. Tosly detects Terms of Service, Privacy Policy, EULA and similar documents by structure rather than a maintained allowlist, so it works on sites nobody has audited.',
+  },
+  {
+    q: 'What does it cost?',
+    a: 'Nothing. Tosly is free on the Chrome Web Store, and the extension source is public.',
+  },
+];
 ---
 
-<BaseLayout
-  title="Tosly - Read Every ToS in Seconds"
-  description="Tosly is a free Chrome extension that automatically scans Terms of Service pages, flags predatory clauses in plain English, and highlights the exact text - before you click Accept."
+<EditorialLayout
+  title="Tosly: Read the Terms of Service before you accept them"
+  description="Tosly is a free Chrome extension that scans Terms of Service pages, flags predatory clauses by severity, and highlights the exact sentence on the page before you click Accept."
   keywords="terms of service scanner, privacy policy analyzer, chrome extension, legal risk, ToS highlights"
   canonical="https://tosly.online/"
-  ogTitle="Tosly - Read Every ToS in Seconds"
-  ogDescription="AI-powered Chrome extension that scans Terms of Service and highlights predatory clauses before you agree to them."
-  ogType="website"
   ogUrl="https://tosly.online/"
-  twitterTitle="Tosly - Read Every ToS in Seconds"
-  twitterDescription="AI-powered Chrome extension that flags predatory clauses in any Terms of Service."
-  bodyClass="overflow-x-hidden"
+  ogImage="https://tosly.online/img/demo-poster.jpg"
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Tosly",
-    "applicationCategory": "BrowserApplication",
-    "operatingSystem": "Chrome",
-    "description": "AI Chrome extension that scans Terms of Service and highlights predatory clauses.",
-    "url": "https://tosly.online/",
-    "installUrl": "https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Tosly',
+    applicationCategory: 'BrowserApplication',
+    operatingSystem: 'Chrome',
+    description: 'AI Chrome extension that scans Terms of Service and highlights predatory clauses.',
+    url: 'https://tosly.online/',
+    installUrl: STORE,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   })} />
+  <Nav />
 
-  <style>
-    /* Noise texture overlay */
-    .noise::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      border-radius: inherit;
-    }
+  <main>
+    <!-- ══ Hero ═══════════════════════════════════════════════════════════ -->
+    <section class="bg-paper-100 pt-14 pb-0 overflow-hidden">
+      <div class="shell">
+        <!-- Announcement -->
+        <div class="flex justify-center">
+          <a href="#catalogue" class="group inline-flex items-center gap-3 bg-white pl-1.5 pr-3.5 py-1.5 border border-navy/10">
+            <span class="marker bg-lime-400 text-lime-800">New!</span>
+            <span class="text-fine font-medium text-navy">Tosly now flags class-action waivers</span>
+            <span class="text-flame-600"><ArrowRight size={14} /></span>
+          </a>
+        </div>
 
-    /* Soft radial glow behind hero */
-    .hero-glow {
-      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(239,68,68,0.06) 0%, transparent 70%),
-                  radial-gradient(ellipse 60% 40% at 80% 30%, rgba(234,179,8,0.04) 0%, transparent 60%),
-                  #f8f8fb;
-    }
+        <!-- Headline -->
+        <h1 class="mt-9 text-d1 text-navy text-center max-w-[46rem] mx-auto">
+          You clicked Accept.<br class="hidden sm:block" /> Without reading it.
+        </h1>
 
-    /* Glass card */
-    .glass {
-      background: rgba(255,255,255,0.7);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(0,0,0,0.07);
-    }
+        <p class="mt-6 text-lede text-navy/75 text-center max-w-[38rem] mx-auto">
+          Tosly scans the Terms of Service before you agree, flags the clauses built to
+          work against you, and highlights the exact sentence on the page.
+        </p>
 
-    /* Shield mock */
-    .shield-mock {
-      background: rgba(10,10,12,0.96);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 32px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.04) inset;
-    }
-
-    /* Ticker */
-    .ticker-track {
-      display: flex;
-      width: max-content;
-    }
-
-    .ticker-container:hover .ticker-track {
-      animation-play-state: paused;
-    }
-
-    /* Hover lift */
-    .lift {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .lift:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-    }
-
-    /* Feature image card */
-    .feat-card {
-      background: rgba(255,255,255,0.6);
-      border: 1px solid rgba(0,0,0,0.07);
-      box-shadow: 0 2px 24px rgba(0,0,0,0.06), 0 0 0 1px rgba(255,255,255,0.8) inset;
-    }
-  </style>
-
-  <!-- ── Nav ───────────────────────────────────────────────────────────── -->
-  <header class="fixed top-0 left-0 right-0 z-50">
-    <nav class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between md:grid md:grid-cols-3">
-      <!-- Logo + wordmark -->
-      <a href="/" class="inline-flex items-center gap-2 group">
-        <img src="/logo.png" alt="" class="h-8 w-8 rounded-full object-cover" />
-        <span class="font-bold text-ink text-base tracking-tight group-hover:opacity-80 transition-opacity">Tosly</span>
-      </a>
-
-      <!-- Center nav links (desktop only) -->
-      <div class="hidden md:flex justify-center">
-        <div class="glass rounded-full px-6 py-2.5 flex items-center gap-6 text-sm font-medium shadow-sm">
-          <a href="#how-it-works" class="text-muted hover:text-ink transition-colors">How it works</a>
-          <a href="#features" class="text-muted hover:text-ink transition-colors">Features</a>
-          <a href="#faq" class="text-muted hover:text-ink transition-colors">FAQ</a>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <Btn href={STORE} variant="flame" external>
+            <img src="/google.svg" alt="" width="16" height="16" class="w-4 h-4" />
+            Add to Chrome, free
+          </Btn>
+          <Btn href="#catalogue" variant="outline">See what it catches</Btn>
         </div>
       </div>
 
-      <!-- Right side -->
-      <div class="flex justify-end items-center gap-2">
-        <!-- Desktop CTA -->
-        <a
-          href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hidden md:inline-flex glass rounded-full px-5 py-2.5 text-sm font-semibold text-ink shadow-sm hover:bg-ink transition-all duration-200 items-center gap-2"
-        >
-          <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
-          Add to Chrome - free
-        </a>
+      <!-- Demo: the product doing the thing, on a flat colour band -->
+      <div class="mt-14 relative pb-sec-sm">
+        <div class="absolute inset-x-0 top-[24%] bottom-[8%] bg-rose-400"></div>
 
-        <!-- Mobile hamburger -->
-        <button
-          id="mobile-menu-trigger"
-          type="button"
-          aria-label="Open menu"
-          aria-expanded="false"
-          aria-controls="mobile-menu"
-          class="md:hidden glass rounded-full h-11 w-11 flex items-center justify-center shadow-sm text-ink"
-        >
-          <svg id="menu-icon-open" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-            <path d="M2 5H16M2 9H16M2 13H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-          <svg id="menu-icon-close" width="18" height="18" viewBox="0 0 18 18" fill="none" class="hidden" aria-hidden="true">
-            <path d="M3 3L15 15M15 3L3 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-    </nav>
+        <div class="relative shell">
+          <div class="max-w-[56rem] mx-auto relative">
+            <VideoFacade
+              id="ivAgRwcxAH4"
+              title="Tosly scanning a Terms of Service page"
+              poster="/img/demo-poster.jpg"
+            />
 
-    <!-- Mobile menu drawer -->
-    <div
-      id="mobile-menu"
-      class="md:hidden hidden px-4 sm:px-6"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Site menu"
-    >
-      <div class="glass rounded-2xl mt-2 p-3 shadow-xl">
-        <nav class="flex flex-col">
-          <a href="#how-it-works" class="mobile-menu-link px-4 py-3 rounded-xl text-base font-medium text-ink hover:bg-black/5 transition-colors">How it works</a>
-          <a href="#features"      class="mobile-menu-link px-4 py-3 rounded-xl text-base font-medium text-ink hover:bg-black/5 transition-colors">Features</a>
-          <a href="#faq"           class="mobile-menu-link px-4 py-3 rounded-xl text-base font-medium text-ink hover:bg-black/5 transition-colors">FAQ</a>
-        </nav>
-        <a
-          href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mobile-menu-link mt-2 flex items-center justify-center gap-2 bg-ink text-white rounded-full px-5 py-3.5 text-sm font-semibold tracking-wide shadow-lg"
-        >
-          <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
-          Add to Chrome - free
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <script>
-    const trigger = document.getElementById('mobile-menu-trigger');
-    const menu    = document.getElementById('mobile-menu');
-    const iconOpen  = document.getElementById('menu-icon-open');
-    const iconClose = document.getElementById('menu-icon-close');
-    let isOpen = false;
-
-    function setOpen(open: boolean) {
-      isOpen = open;
-      menu?.classList.toggle('hidden', !open);
-      iconOpen?.classList.toggle('hidden', open);
-      iconClose?.classList.toggle('hidden', !open);
-      trigger?.setAttribute('aria-expanded', String(open));
-      trigger?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      document.body.style.overflow = open ? 'hidden' : '';
-    }
-
-    trigger?.addEventListener('click', () => setOpen(!isOpen));
-
-    menu?.querySelectorAll('.mobile-menu-link').forEach(link => {
-      link.addEventListener('click', () => setOpen(false));
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isOpen) setOpen(false);
-    });
-
-    // Close when crossing into desktop breakpoint
-    const mq = window.matchMedia('(min-width: 768px)');
-    mq.addEventListener('change', (e) => {
-      if (e.matches && isOpen) setOpen(false);
-    });
-  </script>
-
-  <main>
-
-  <!-- ── Hero ──────────────────────────────────────────────────────────── -->
-  <section class="hero-glow relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-6 overflow-hidden noise">
-
-
-    <!-- Headline -->
-    <Heading as="h1" size="display" class="animate-float-up delay-100 text-center max-w-3xl block">
-      You clicked Accept.<br/>
-      <AccentEm>Without reading it.</AccentEm>
-    </Heading>
-
-    <p class="animate-float-up delay-200 mt-6 text-center max-w-lg text-muted text-[1.05rem] leading-relaxed font-normal">
-      Tosly scans every Terms of Service page in seconds, flags the clauses designed to hurt you, and highlights the exact text - before you agree.
-    </p>
-
-    <!-- CTA -->
-    <div class="animate-float-up delay-300 mt-9 flex flex-col sm:flex-row items-center gap-3">
-      <a
-        href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
-        target="_blank"
-        rel="noopener"
-        class="lift inline-flex items-center gap-2.5 bg-ink text-white rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide shadow-lg hover:bg-ink-soft"
-      >
-        <img src="/google.svg" alt="Chrome" width="16" height="16" class="flex-shrink-0" />
-        Add to Chrome - it's free
-      </a>
-      <a href="#how-it-works" class="text-sm font-medium text-muted hover:text-ink transition-colors">
-        See how it works →
-      </a>
-    </div>
-
-    <!-- Hero Video -->
-    <div class="animate-float-up delay-400 mt-16 w-full max-w-3xl relative">
-
-      <!-- Ambient glow behind the card -->
-      <div class="absolute inset-0 rounded-3xl pointer-events-none" style="
-        background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(239,68,68,0.18) 0%, rgba(234,179,8,0.08) 40%, transparent 70%);
-        filter: blur(32px);
-        transform: scale(1.08) translateY(8px);
-        z-index: 0;
-      "></div>
-
-      <div class="relative z-10">
-        <HeroVideo client:load />
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ── Logo strip ─────────────────────────────────────────────────────── -->
-  <section class="py-12 border-y border-hairline bg-white overflow-hidden">
-    <p class="text-center text-xs font-medium tracking-widest text-muted uppercase mb-7">
-      Try it on any of these services
-    </p>
-    <div class="relative overflow-hidden ticker-container">
-      <div class="ticker-track animate-ticker">
-        {[...companies, ...companies].map(co => (
-          <a
-            href={co.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 mx-10 text-muted hover:text-ink transition-colors duration-200 cursor-pointer"
-          >
-            <span class="w-5 h-5 flex-shrink-0" set:html={co.svg} />
-            <span class="text-sm font-semibold tracking-wide">{co.name}</span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ── How it works ───────────────────────────────────────────────────── -->
-  <section id="how-it-works" class="py-28 px-6">
-    <div class="max-w-6xl mx-auto">
-      <SectionMarker number="02" label="How it works" />
-      <div class="text-center mb-20">
-        <Heading size="lg">
-          Three steps between you<br/>and the truth
-        </Heading>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-6">
-        {[
-          { step: '1', title: 'Install', body: 'Add Tosly from the Chrome Web Store. Takes 10 seconds, zero setup required.' },
-          { step: '2', title: 'Browse', body: 'Visit any Terms of Service or Privacy Policy page. Tosly detects it automatically.' },
-          { step: '3', title: 'Read the flags', body: 'The shield glows red, yellow, or green. Open it to see every risky clause, highlighted on the page.' },
-        ].map(item => (
-          <div class="glass rounded-2xl p-8 lift relative overflow-hidden noise">
-            <div class="text-[5rem] font-bold leading-none text-surface-2 absolute -top-2 -right-2 select-none" style="font-family:'JetBrains Mono',monospace;">{item.step}</div>
-            <div class="w-8 h-8 rounded-full bg-ink flex items-center justify-center mb-5">
-              <span class="text-white text-xs font-bold">{item.step}</span>
+            <!-- "3 found" is what the widget reports in this exact scan -->
+            <div class="hidden sm:block absolute -right-3 lg:-right-8 -bottom-7 bg-flame-600 text-white px-4 py-2.5 lg:px-5 lg:py-3.5">
+              <span class="font-heading text-[1.5rem] lg:text-[2rem] leading-none block">3 flags</span>
+              <span class="font-mono text-[0.62rem] lg:text-label opacity-80">FOUND ON THIS PAGE</span>
             </div>
-            <h3 class="text-lg font-semibold text-ink mb-2">{item.title}</h3>
-            <p class="text-sm text-muted leading-relaxed">{item.body}</p>
+
+            <div class="hidden lg:block absolute -left-10 -bottom-10 w-16 h-16 bg-azure-800"></div>
           </div>
-        ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ── Features ───────────────────────────────────────────────────────── -->
-  <section id="features" class="py-20 px-6 bg-white">
-    <div class="max-w-6xl mx-auto">
-      <SectionMarker number="03" label="Features" />
-      <div class="text-center mb-20">
-        <Heading size="lg">
-          Built to catch what<br/>
-          <AccentEm tone="inherit">companies hide</AccentEm>
-        </Heading>
+    <!-- ══ Marquee ════════════════════════════════════════════════════════ -->
+    <section class="py-12 border-b border-navy/10">
+      <h2 class="text-center text-d4 text-navy/50 font-heading mb-8">
+        Reads the fine print on the sites you already use
+      </h2>
+      <div class="marquee">
+        <div class="marquee-track">
+          {[0, 1].map((copy) => (
+            <div class="flex items-center shrink-0" aria-hidden={copy === 1 ? 'true' : undefined}>
+              {companies.map((c) => (
+                <a
+                  href={c.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="px-7 lg:px-10 flex flex-col items-center gap-2 text-navy/45 hover:text-navy transition-colors"
+                  aria-label={`${c.name} privacy policy`}
+                >
+                  <span class="block w-8 h-8" set:html={c.svg} />
+                  <span class="font-mono text-[0.7rem] tracking-wide whitespace-nowrap">{c.name}</span>
+                </a>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
+    </section>
 
-      <div class="space-y-28">
-        {features.map((feat, i) => (
-          <div class={`grid md:grid-cols-2 gap-12 items-center ${i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''}`}>
-            <!-- Text -->
-            <div>
-              <div class="flex items-center gap-3 mb-6">
-                <span class="text-xs font-mono font-medium text-muted">{feat.num}</span>
-                <div class="h-px flex-1 bg-hairline"></div>
+    <!-- ══ How it works ═══════════════════════════════════════════════════ -->
+    <section id="how-it-works" class="pt-sec pb-sec-sm">
+      <div class="shell">
+        <SectionHead
+          eyebrow="How Tosly works"
+          tone="flame"
+          class="reveal"
+          lede="Three steps run before you reach the Accept button, and none of them are yours. Tosly detects the document, has two models read it end to end, then marks the sentences that earned a flag."
+        >
+          The reading happens before you agree
+          <div slot="cta" class="mt-8">
+            <Btn href="#why" variant="navy">See a live scan</Btn>
+          </div>
+        </SectionHead>
+
+        <!-- Three cards -->
+        <div class="mt-14 grid gap-4 md:grid-cols-3">
+          {steps.map((s, i) => (
+            <a href={s.href} class={`reveal group flex flex-col ${stepBg[s.tone]}`} style={`transition-delay:${i * 80}ms`}>
+              <div class="px-6 pt-7 pb-3 flex items-baseline justify-between gap-3">
+                <h3 class="text-d3 text-navy">{s.title}</h3>
+                <span class="font-mono text-label text-navy/45">0{i + 1}</span>
               </div>
-              <Heading as="h3" size="sm" class="mb-4">
-                {feat.title}<br/>
-                <AccentEm>{feat.accent}</AccentEm>
-              </Heading>
-              <p class="text-muted text-base leading-relaxed mb-7">{feat.body}</p>
-              <ul class="space-y-2.5">
-                {feat.bullets.map(b => (
-                  <li class="flex items-center gap-3 text-sm text-body">
-                    <svg class="w-4 h-4 text-brand-green flex-shrink-0" viewBox="0 0 16 16" fill="none">
-                      <circle cx="8" cy="8" r="7.5" stroke="#22c55e" stroke-opacity="0.3"/>
-                      <path d="M5 8L7 10L11 6" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            </div>
 
-            <!-- Visual -->
-            <div class="feat-card rounded-2xl p-6 min-h-[280px] flex items-center justify-center relative overflow-hidden noise">
-              {i === 0 && (
-                <div class="w-full space-y-2 text-xs">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-muted mb-4">Live scan - spotify.com</div>
-                  {flags.map(flag => {
-                    const cfg = severityConfig[flag.severity];
-                    return (
-                      <div class="rounded-lg px-3 py-2.5 flex items-start gap-2.5" style={`background:${cfg.bg}; border:1px solid ${cfg.border};`}>
-                        <div class="w-1.5 h-1.5 rounded-full mt-1 flex-shrink-0" style={`background:${cfg.color};`}></div>
-                        <div>
-                          <div class="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={`color:${cfg.color};`}>{flag.category}</div>
-                          <div class="text-[10px] text-body leading-snug">{flag.text.slice(0,70)}…</div>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div class="px-6 pb-7 pt-2 flex items-end justify-between gap-4 flex-1">
+                <p class="text-copy text-navy/80 max-w-[16rem]">{s.body}</p>
+                <span class="text-navy shrink-0 transition-transform group-hover:translate-x-1">
+                  <ArrowRight size={18} />
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ Why ════════════════════════════════════════════════════════════ -->
+    <section id="why" class="py-sec">
+      <div class="shell">
+        <div class="max-w-[38rem] reveal">
+          <Eyebrow tone="lime" class="mb-5">Why it stays installed</Eyebrow>
+          <h2 class="text-d2 text-navy">Built for the part nobody reads</h2>
+          <p class="mt-5 text-copy text-navy/75">
+            Five things Tosly does that a search box and good intentions do not.
+          </p>
+        </div>
+
+        <div class="mt-12 reveal">
+          <WhyAccordion items={whyItems}>
+            <Shot
+              slot="mock-0" tone="flame" class="max-w-[25rem]"
+              src="/img/shot-panel.png" width={700} height={900}
+              alt="Tosly's panel on Spotify's privacy policy listing three flags: Third-Party Sharing and Data Deletion Rights as high risk, Data Selling as caution."
+              caption="REAL SCAN / SPOTIFY PRIVACY POLICY"
+            />
+            <Shot
+              slot="mock-1" tone="lime" class="max-w-[30rem]"
+              src="/img/shot-severity.png" width={660} height={470}
+              alt="Three flagged clauses with their severity chips: two marked HIGH RISK in red, one marked CAUTION in yellow."
+              caption="SEVERITY CHIPS, UNRETOUCHED"
+            />
+            <Shot
+              slot="mock-2" tone="sun"
+              src="/img/shot-highlight.png" width={1199} height={207}
+              alt="A sentence in Spotify's policy highlighted in place: 'After your account is deleted, we keep some data for a longer time period but for very limited purposes.'"
+              caption="IN-PAGE HIGHLIGHT, VERBATIM"
+            />
+            <Shot
+              slot="mock-3" tone="azure" class="max-w-[20rem]"
+              src="/img/shot-badge.png" width={280} height={290}
+              alt="Tosly's shield badge sitting in the corner of the page, showing a HIGH RISK label."
+              caption="THE WIDGET, WHERE YOU LEFT IT"
+            />
+            <MockPrivacy slot="mock-4" />
+          </WhyAccordion>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ Specimens / bento ══════════════════════════════════════════════ -->
+    <section id="catalogue" class="py-sec bg-paper-50">
+      <div class="shell">
+        <SectionHead eyebrow="What a flag looks like" tone="sun" class="reveal">
+          Real clauses, quoted verbatim
+          <div slot="cta" class="mt-8">
+            <Btn href={STORE} variant="navy" external>Scan a page yourself</Btn>
+          </div>
+        </SectionHead>
+
+        <div class="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <!-- Stats -->
+          {stats.map((s, i) => (
+            <div class={`reveal ${s.bg} p-6 flex flex-col justify-between min-h-[12rem]`} style={`transition-delay:${i * 70}ms`}>
+              <span class={`font-heading text-[clamp(2.25rem,3.4vw,2.75rem)] leading-none ${s.fg}`}>{s.figure}</span>
+              <span class="text-fine text-navy/70 mt-4 pt-4 border-t border-navy/12">{s.caption}</span>
+            </div>
+          ))}
+
+          <!-- Categories the analyzer returns, rather than a made-up count -->
+          <div class="reveal bg-white border border-navy/12 p-6 flex flex-col justify-between min-h-[12rem]">
+            <ul class="flex flex-wrap gap-1.5 content-start">
+              {realCategories.map((cat) => (
+                <li class="font-mono text-[0.7rem] bg-paper-100 text-navy/75 px-1.5 py-1">{cat}</li>
+              ))}
+            </ul>
+            <span class="text-fine text-navy/70 mt-4 pt-4 border-t border-navy/12">categories seen in real scans</span>
+          </div>
+
+          <!-- Clause specimens -->
+          {specimens.map((sp, i) => (
+            <div class="reveal bg-white border border-navy/12 p-6 flex flex-col justify-between min-h-[13rem] md:col-span-1 lg:col-span-2" style={`transition-delay:${i * 70}ms`}>
+              <div>
+                <div class="flex items-center gap-2.5 mb-4">
+                  <span class={`marker ${sp.tierBg} ${sp.tierText} !text-[0.65rem]`}>{sp.tier}</span>
+                  <span class="font-mono text-label text-navy/50">{sp.category}</span>
                 </div>
-              )}
-              {i === 1 && (
-                <div class="w-full">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-muted mb-4">Highlighted on-page</div>
-                  <div class="space-y-3 text-sm text-body leading-relaxed">
-                    <p>By accessing our services you agree to be bound by these terms. <span class="rounded px-1 py-0.5" style="background:rgba(239,68,68,0.15); outline:1px solid rgba(239,68,68,0.4);">We may share your personal data with third-party advertising partners at our discretion.</span> Any disputes shall be resolved via binding arbitration.</p>
-                    <p>Your account automatically <span class="rounded px-1 py-0.5" style="background:rgba(234,179,8,0.15); outline:1px solid rgba(234,179,8,0.4);">renews unless cancelled 24 hours before the billing period ends.</span></p>
-                    <p><span class="rounded px-1 py-0.5" style="background:rgba(34,197,94,0.12); outline:1px solid rgba(34,197,94,0.35);">You may request deletion of your data at any time.</span> We will process the request within 30 days.</p>
-                  </div>
-                </div>
-              )}
-              {i === 2 && (
-                <div class="flex flex-col items-center gap-4 w-full">
-                  <div class="text-[10px] font-semibold uppercase tracking-widest text-muted mb-2">Widget settings</div>
-                  <div class="glass w-full max-w-xs rounded-xl p-4 space-y-3">
-                    {[
-                      { label: 'Auto-scan TOS pages', on: true },
-                      { label: '7-day result cache', on: true },
-                      { label: 'Highlight quotes', on: true },
-                    ].map(opt => (
-                      <div class="flex items-center justify-between">
-                        <span class="text-xs text-body font-medium">{opt.label}</span>
-                        <div class="w-9 h-5 rounded-full flex items-center px-0.5" style={`background:${opt.on ? '#22c55e' : '#e5e7eb'};`}>
-                          <div class={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${opt.on ? 'translate-x-4' : ''}`}></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div class="text-[10px] text-muted text-center">Position persists across all sites</div>
-                </div>
-              )}
+                <p class="font-heading text-d4 text-navy">&ldquo;{sp.text}&rdquo;</p>
+              </div>
+              <p class="mt-5 text-fine text-navy/55">Quoted from the document, highlighted in place.</p>
+            </div>
+          ))}
+
+          <!-- Filler block -->
+          <div class="reveal bg-iris-400 min-h-[13rem] lg:col-span-2 relative">
+            <div class="absolute inset-0 grid place-items-center p-6 text-center">
+              <p class="font-heading text-d3 text-iris-700 max-w-[18rem]">
+                Green flags count too.
+              </p>
             </div>
           </div>
-        ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ── Severity breakdown ─────────────────────────────────────────────── -->
-  <section class="py-24 px-6 hero-glow overflow-hidden noise relative">
-    <div class="max-w-4xl mx-auto text-center">
-      <SectionMarker number="04" label="Risk Tiers" />
-      <Heading size="md" class="mb-14">
-        Every flag tells you<br/>exactly how worried to be
-      </Heading>
-      <div class="grid md:grid-cols-3 gap-5">
-        {[
-          { color: '#ef4444', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.15)', label: 'High Risk', icon: '!', desc: 'Clauses that directly harm you - data selling, forced arbitration, unilateral changes.' },
-          { color: '#eab308', bg: 'rgba(234,179,8,0.06)', border: 'rgba(234,179,8,0.15)', label: 'Caution', icon: '~', desc: 'Watch-outs worth knowing - auto-renewals, broad license grants, price change rights.' },
-          { color: '#22c55e', bg: 'rgba(34,197,94,0.06)', border: 'rgba(34,197,94,0.15)', label: 'Clear', icon: '✓', desc: 'User-friendly clauses - data deletion rights, clear cancellation terms, GDPR compliance.' },
-        ].map(tier => (
-          <div class="rounded-2xl p-7 text-left lift noise relative overflow-hidden" style={`background:${tier.bg}; border:1px solid ${tier.border};`}>
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center mb-5 text-sm font-bold" style={`background:${tier.color}20; color:${tier.color}; border:1px solid ${tier.color}40;`}>
-              {tier.icon}
-            </div>
-            <h3 class="font-semibold text-ink mb-2">{tier.label}</h3>
-            <p class="text-sm text-muted leading-relaxed">{tier.desc}</p>
+    <!-- ══ Audiences ══════════════════════════════════════════════════════ -->
+    <section id="audiences" class="py-sec">
+      <div class="shell">
+        <div class="text-center flex flex-col items-center reveal">
+          <Eyebrow tone="lime" class="mb-5">Use cases</Eyebrow>
+          <h2 class="text-d2 text-navy max-w-[46rem]">
+            Consent runs on reading.<br class="hidden sm:block" /> Tosly does the reading.
+          </h2>
+          <p class="mt-5 text-copy text-navy/75 max-w-[38rem]">
+            The clauses that matter change with what you are signing up for. Pick the one that sounds like you.
+          </p>
+        </div>
+
+        <div class="mt-12 reveal">
+          <AudienceTabs items={audiences} />
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ Trust ══════════════════════════════════════════════════════════ -->
+    <section id="trust" class="pt-sec-sm pb-sec">
+      <div class="shell">
+        <PixelFrame class="reveal max-w-[68rem] mx-auto">
+          <Eyebrow tone="flame" class="mb-4">Privacy</Eyebrow>
+          <h2 class="text-d2 text-navy">Private by design, not by promise</h2>
+          <p class="mt-4 text-copy text-navy/75 max-w-[30rem]">
+            No account, no sign-in, and no record of what you read leaving your machine.
+            Settings and cached results stay in your browser profile.
+          </p>
+          <div class="mt-7">
+            <Btn href="/privacy" variant="outline">Read the privacy policy</Btn>
           </div>
-        ))}
+        </PixelFrame>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ── FAQ ────────────────────────────────────────────────────────────── -->
-  <section id="faq" class="py-24 px-6 bg-white">
-    <div class="max-w-2xl mx-auto">
-      <SectionMarker number="05" label="FAQ" />
-      <div class="text-center mb-14">
-        <Heading size="md">Common questions</Heading>
+    <!-- ══ Resources ══════════════════════════════════════════════════════ -->
+    <section id="resources" class="py-sec bg-paper-50">
+      <div class="shell">
+        <SectionHead eyebrow="Resources" tone="azure" class="reveal">
+          Everything else you might want
+        </SectionHead>
+
+        <div class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {resources.map((r, i) => (
+            <a
+              href={r.href}
+              target={r.external ? '_blank' : undefined}
+              rel={r.external ? 'noopener noreferrer' : undefined}
+              class="reveal group bg-white border border-navy/12 flex flex-col hover:border-navy/35 transition-colors"
+              style={`transition-delay:${i * 60}ms`}
+            >
+              <img
+                src={r.img}
+                alt=""
+                width="1000"
+                height="400"
+                loading="lazy"
+                decoding="async"
+                class="w-full aspect-[2.5/1] object-cover object-top border-b border-navy/12"
+              />
+              <div class="p-6 flex-1 flex flex-col">
+                <h3 class="text-d4 text-navy">{r.title}</h3>
+                <p class="mt-2.5 text-copy text-navy/70 flex-1">{r.body}</p>
+                <span class="arrow-link mt-5 text-flame-600">
+                  {r.external ? 'Open' : 'Read'}
+                  <ArrowRight size={14} />
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
-      <div class="space-y-3">
-        {[
-          { q: 'Is it really free?', a: 'Yes. Tosly is completely free to use with no paywalled features.' },
-          { q: 'Does Tosly read my browsing history?', a: 'No. Tosly only activates on pages that match Terms of Service URL patterns or titles. It never reads or stores any other browsing data.' },
-          { q: 'How accurate is the AI analysis?', a: 'Tosly uses AI to identify clause types against known predatory patterns. It provides useful signal - not legal advice. For important contracts, consult a lawyer.' },
-          { q: 'Does it work on every site?', a: 'Tosly works on any publicly accessible Terms of Service or Privacy Policy page. If a site uses uncommon URL patterns, you can trigger a manual scan.' },
-          { q: 'What data leaves my browser?', a: 'Only the page text and URL are sent to our backend for analysis. Results are cached for 7 days - the same page won\'t be re-analyzed unnecessarily.' },
-        ].map(item => (
-          <FaqItem q={item.q} a={item.a} variant="glass" />
-        ))}
+    </section>
+
+    <!-- ══ Closing CTA ════════════════════════════════════════════════════ -->
+    <section class="py-sec">
+      <div class="shell grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div class="reveal">
+          <h2 class="text-d2 text-navy max-w-[26rem]">Stop agreeing to things you haven&rsquo;t read</h2>
+          <p class="mt-5 text-copy text-navy/75 max-w-[30rem]">
+            It takes one click to install and zero clicks to use. The next Terms of Service
+            page you open will already be read by the time you get to the bottom.
+          </p>
+          <div class="mt-8">
+            <Btn href={STORE} variant="flame" external>
+              <img src="/google.svg" alt="" width="16" height="16" class="w-4 h-4" />
+              Add to Chrome, free
+            </Btn>
+          </div>
+        </div>
+
+        <!-- Collage -->
+        <div class="reveal relative">
+          <div class="bg-azure-300 aspect-[4/3]"></div>
+          <div class="absolute inset-0 p-6 sm:p-10 flex flex-col justify-between">
+            <div class="bg-white border border-navy/12 p-4 sm:p-5 max-w-[19rem] shadow-[0_18px_50px_-16px_rgba(0,6,61,0.25)]">
+              <span class="marker bg-flame-600 text-white !text-[0.65rem]">HIGH RISK</span>
+              <p class="mt-3 font-heading text-d4 text-navy">
+                &ldquo;We reserve the right to modify pricing at any time.&rdquo;
+              </p>
+            </div>
+
+            <div class="self-end bg-navy text-white px-5 py-4 max-w-[15rem]">
+              <span class="font-heading text-[2.25rem] leading-none block">7 days</span>
+              <span class="font-mono text-label opacity-70">CACHED, THEN FORGOTTEN</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <WaveDivider from="#ffffff" to="#0a0a0c" variant="dramatic" height={72} />
+    <!-- ══ FAQ ════════════════════════════════════════════════════════════ -->
+    <section id="faq" class="pb-sec">
+      <div class="shell relative">
+        <!-- Rotated sticker -->
+        <span
+          class="absolute -top-4 left-4 sm:left-8 z-10 bg-flame-600 text-navy font-heading text-[1.75rem] sm:text-[2.25rem] leading-none px-4 py-1.5 -rotate-6 shadow-[0_10px_28px_-10px_rgba(0,6,61,0.35)]"
+        >FAQs</span>
 
-  <!-- ── CTA ────────────────────────────────────────────────────────────── -->
-  <section class="pt-20 pb-28 px-6 bg-ink relative overflow-hidden noise">
-    <!-- Subtle glow -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div class="w-[600px] h-[300px] rounded-full" style="background:radial-gradient(ellipse, rgba(239,68,68,0.12) 0%, transparent 70%);"></div>
-    </div>
-    <div class="max-w-3xl mx-auto text-center relative">
-      <SectionMarker number="06" label="Install" tone="dark" class="mb-12" />
-      <div class="w-16 h-16 mx-auto mb-8 rounded-2xl flex items-center justify-center" style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2);">
-        <svg width="28" height="32" viewBox="0 0 32 36" fill="none">
-          <path d="M16 2L3 7V18C3 25.18 8.64 31.9 16 34C23.36 31.9 29 25.18 29 18V7L16 2Z"
-            fill="#ef4444" fill-opacity="0.15" stroke="#ef4444" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M11 18L14.5 21.5L21 14" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <div class="pt-10 reveal">
+          <FaqList items={faqs} />
+        </div>
       </div>
-      <Heading size="xl" tone="white" class="mb-5">
-        Stop clicking Accept<br/>
-        <AccentEm>blindly.</AccentEm>
-      </Heading>
-      <p class="text-muted text-base mb-10 leading-relaxed">
-        Install Tosly once. Understand every agreement, forever.
-      </p>
-      <a
-        href="https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig"
-        target="_blank"
-        rel="noopener"
-        class="lift inline-flex items-center gap-3 bg-white text-ink rounded-full px-8 py-4 text-sm font-bold tracking-wide shadow-xl"
-      >
-        <img src="/google.svg" alt="Chrome" width="18" height="18" class="flex-shrink-0" />
-        Add to Chrome - free forever
-      </a>
-    </div>
-  </section>
-
+    </section>
   </main>
 
-  <SiteFooter variant="full" />
-</BaseLayout>
+  <Footer />
+</EditorialLayout>

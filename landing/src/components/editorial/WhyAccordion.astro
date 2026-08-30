@@ -1,0 +1,100 @@
+---
+import ArrowRight from './ArrowRight.astro';
+
+export interface WhyItem {
+  title: string;
+  body: string;
+  cta: string;
+  href: string;
+  badge?: string;
+}
+
+/*
+  Rows on the left, one shared mockup panel on the right that swaps with the
+  open row. Mockup slots are declared statically (mock-0 … mock-4) because
+  Astro requires literal slot names, so five rows is the ceiling.
+*/
+interface Props { items: WhyItem[] }
+const { items } = Astro.props;
+
+const SLOTS = [0, 1, 2, 3, 4];
+---
+
+<div class="grid lg:grid-cols-[1fr_1.05fr] gap-x-10 gap-y-10 items-start" data-why>
+  <!-- Rows -->
+  <div class="border-t border-flame-400/60">
+    {items.map((item, i) => (
+      <div class="border-b border-flame-400/60" data-why-row data-index={i} data-open={i === 0 ? 'true' : 'false'}>
+        <h3>
+          <button
+            type="button"
+            class="w-full flex items-start justify-between gap-4 py-5 text-left group"
+            aria-expanded={i === 0 ? 'true' : 'false'}
+            data-why-trigger
+          >
+            <span class="text-d4 text-navy group-hover:text-flame-600 transition-colors">
+              {item.title}
+              {item.badge && (
+                <sup class="ml-1.5 marker bg-sun-700 text-navy !text-[0.6rem] !px-1 !py-0 align-super">{item.badge}</sup>
+              )}
+            </span>
+            <span class="acc-chevron mt-1.5 shrink-0 text-flame-600">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3 5.5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        </h3>
+
+        <div class="acc-panel">
+          <div>
+            <div class="pb-5 pr-6">
+              <p class="text-copy text-navy/75 max-w-[34rem]">{item.body}</p>
+              <a href={item.href} class="arrow-link mt-4 text-flame-600 hover:text-flame-700">
+                {item.cta}
+                <ArrowRight size={14} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Mockup panel: below the rows on small screens, sticky beside them at lg -->
+  <div class="lg:sticky lg:top-28 order-last">
+    <div data-why-mock data-index="0"><slot name="mock-0" /></div>
+    <div data-why-mock data-index="1" class="hidden"><slot name="mock-1" /></div>
+    <div data-why-mock data-index="2" class="hidden"><slot name="mock-2" /></div>
+    <div data-why-mock data-index="3" class="hidden"><slot name="mock-3" /></div>
+    <div data-why-mock data-index="4" class="hidden"><slot name="mock-4" /></div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-why]').forEach((root) => {
+    const rows  = [...root.querySelectorAll<HTMLElement>('[data-why-row]')];
+    const mocks = [...root.querySelectorAll<HTMLElement>('[data-why-mock]')];
+
+    const open = (index: number) => {
+      rows.forEach((row) => {
+        const on = row.dataset.index === String(index);
+        row.dataset.open = String(on);
+        row.querySelector('[data-why-trigger]')?.setAttribute('aria-expanded', String(on));
+      });
+      mocks.forEach((m) => m.classList.toggle('hidden', m.dataset.index !== String(index)));
+    };
+
+    rows.forEach((row) => {
+      row.querySelector('[data-why-trigger]')?.addEventListener('click', () => {
+        // Re-clicking the open row collapses it; the mockup keeps the last pick.
+        if (row.dataset.open === 'true') {
+          row.dataset.open = 'false';
+          row.querySelector('[data-why-trigger]')?.setAttribute('aria-expanded', 'false');
+          return;
+        }
+        open(Number(row.dataset.index));
+      });
+    });
+  });
+</script>
