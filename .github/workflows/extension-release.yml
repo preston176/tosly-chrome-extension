@@ -10,8 +10,9 @@ name: Extension Release
 #
 # Loop safety: the bump is pushed with GITHUB_TOKEN, and GitHub does not trigger
 # workflows for pushes made with that token, so this cannot re-trigger itself.
-# The commit-message guard below is a second line of defence in case the push is
-# ever switched to a PAT.
+# The job-level `if` is a second line of defence in case that push is ever
+# switched to a PAT: it skips commits whose message begins with this job's own
+# release prefix.
 
 on:
   push:
@@ -36,7 +37,12 @@ concurrency:
 
 jobs:
   release:
-    if: "!contains(github.event.head_commit.message, '[skip release]')"
+    # Skip only this job's own bump commit. Matching a "[skip release]" sentinel
+    # anywhere in the message meant any commit that merely mentioned the string
+    # silently skipped a release, which is exactly what happened to the commit
+    # that introduced this workflow. head_commit is null on workflow_dispatch,
+    # which startsWith treats as empty, so manual runs are unaffected.
+    if: "!startsWith(github.event.head_commit.message, 'chore(extension): release v')"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -109,7 +115,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add extension/package.json extension/package-lock.json
-          git commit -m "chore(extension): release v${{ steps.version.outputs.version }} [skip release]"
+          git commit -m "chore(extension): release v${{ steps.version.outputs.version }}"
           git tag "extension-v${{ steps.version.outputs.version }}"
           git push origin HEAD:main
           git push origin "extension-v${{ steps.version.outputs.version }}"
