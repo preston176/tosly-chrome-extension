@@ -1,8 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import BackHeader from '../components/BackHeader.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import FaqItem from '../components/FaqItem.astro';
+import EditorialLayout from '../layouts/EditorialLayout.astro';
+import Nav from '../components/editorial/Nav.astro';
+import Footer from '../components/editorial/Footer.astro';
+import Eyebrow from '../components/editorial/Eyebrow.astro';
+import FaqList from '../components/editorial/FaqList.astro';
 
 const TALLY_FORM_ID = import.meta.env.PUBLIC_TALLY_FORM_ID;
 
@@ -38,35 +39,41 @@ const faqs = [
 ];
 ---
 
-<BaseLayout
+<EditorialLayout
   title="Support - Tosly"
   description="Get help with Tosly, the Chrome extension that reads Terms of Service for you. FAQ and contact form."
   canonical="https://tosly.online/support"
-  bodyClass="bg-surface text-ink min-h-screen"
 >
-  <BackHeader />
+  <Nav />
 
-  <main class="max-w-3xl mx-auto px-6 pb-24">
-
-    <section class="mb-16">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Support</h1>
-      <p class="text-lg text-muted leading-relaxed">
-        Most questions are answered below. If yours isn't, the form at the bottom reaches us directly - we read every one and reply within 24 hours.
-      </p>
-    </section>
-
-    <section class="mb-20">
-      <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Frequently asked</h2>
-      <div class="space-y-2">
-        {faqs.map((faq) => (
-          <FaqItem q={faq.q} a={faq.a} variant="solid" />
-        ))}
+  <main>
+    <section class="bg-paper-100 pt-sec pb-sec-sm">
+      <div class="shell">
+        <Eyebrow tone="flame" class="mb-5">Support</Eyebrow>
+        <h1 class="text-d1 text-navy max-w-[30rem]">How can we help?</h1>
+        <p class="mt-6 text-lede text-navy/75 max-w-[38rem]">
+          Most questions are answered below. If yours isn&rsquo;t, the form at the bottom
+          reaches us directly, and we read every one.
+        </p>
       </div>
     </section>
 
-    <section class="mb-12">
-      <h2 class="text-sm font-semibold tracking-widest uppercase text-[#dc2626] mb-6">Still need help</h2>
-      <div class="bg-white rounded-2xl border border-hairline overflow-hidden">
+    <section class="py-sec">
+      <div class="shell">
+        <h2 class="text-d2 text-navy mb-10 max-w-[34rem]">Frequently asked</h2>
+        <FaqList items={faqs.map((f) => ({ q: f.q, a: f.a }))} />
+      </div>
+    </section>
+
+    <section class="pb-sec">
+      <div class="shell">
+        <h2 class="text-d2 text-navy mb-3 max-w-[34rem]">Still need help?</h2>
+        <p class="text-copy text-navy/75 max-w-[34rem] mb-8">
+          Tell us the page and the clause. Wrong flags and missed clauses are the most
+          useful feedback we get.
+        </p>
+
+        <div class="bg-white border border-navy/12 overflow-hidden max-w-[46rem]">
         {TALLY_FORM_ID ? (
           <iframe
             src={`https://tally.so/embed/${TALLY_FORM_ID}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`}
@@ -81,16 +88,20 @@ const faqs = [
             <p class="text-sm">In the meantime, please <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-ink">open a GitHub issue</a>.</p>
           </div>
         )}
+        </div>
+
+        <p class="text-fine text-navy/60 mt-6">
+          Prefer GitHub?
+          <a
+            href="https://github.com/preston176/tosly-chrome-extension/issues/new"
+            class="underline underline-offset-2 hover:text-flame-600 transition-colors"
+          >Open an issue</a> for technical bug reports.
+        </p>
       </div>
-
-      <p class="text-sm text-muted mt-6 text-center">
-        Prefer GitHub? <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-ink">Open an issue</a> for technical bug reports.
-      </p>
     </section>
-
   </main>
 
-  <SiteFooter variant="minimal" />
+  <Footer />
 
   <script is:inline type="text/javascript">
     var d = document, w = "https://tally.so/widgets/embed.js", v = function () {
@@ -106,4 +117,4 @@ const faqs = [
       (s.src = w), (s.onload = v), (s.onerror = v), d.body.appendChild(s);
     }
   </script>
-</BaseLayout>
+</EditorialLayout>

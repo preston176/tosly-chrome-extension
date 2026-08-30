@@ -51,3 +51,238 @@
 .delay-400 { animation-delay: 0.4s; }
 .delay-500 { animation-delay: 0.5s; }
 .delay-600 { animation-delay: 0.6s; }
+
+/* ==========================================================================
+   Everything below belongs to the editorial design system (see v2.astro).
+   Kept in this file so its @layer blocks share Tailwind's PostCSS pass;
+   that ordering is what lets utility classes override .btn / .marker etc.
+   ========================================================================== */
+
+/* ============================================================================
+   Editorial design system
+   Structure + token ramp derived from an analysis of jasper.ai (Webflow).
+   Signature elements: hard-edged blocks, high-contrast display serif,
+   monospace eyebrows on highlighter fills, flat pastel colour blocks, stepped
+   "pixel" frames, and real product screenshots on solid mats.
+   ========================================================================== */
+
+@layer base {
+  .editorial {
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: #00063d;
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .editorial h1, .editorial h2, .editorial h3, .editorial h4 {
+    font-family: Poppins, Inter, system-ui, sans-serif;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  .editorial ::selection { background: #fff133; color: #00063d; }
+}
+
+@layer components {
+  /* ── Layout ───────────────────────────────────────────────────────────── */
+  .shell {
+    width: 100%;
+    max-width: 85rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 0.28rem + 3.86vw, 3.75rem);
+  }
+
+
+  /* ── Long-form document prose (privacy policy, legal) ──────────────────
+     Deliberately looser than the 1.25 marketing leading: dense legal text
+     needs air to be readable, and these pages are read, not scanned. */
+  .prose-doc h2 {
+    font-family: Poppins, Inter, system-ui, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    color: #00063d;
+  }
+  .prose-doc h3 {
+    font-family: Poppins, Inter, system-ui, sans-serif;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: #00063d;
+  }
+  .prose-doc p,
+  .prose-doc ul,
+  .prose-doc ol {
+    color: rgba(0, 6, 61, 0.78);
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+  .prose-doc ul, .prose-doc ol { padding-left: 1.35rem; }
+  .prose-doc ul { list-style: disc; }
+  .prose-doc ol { list-style: decimal; }
+  .prose-doc li { margin-bottom: 0.5rem; }
+  .prose-doc strong { color: #00063d; font-weight: 600; }
+  .prose-doc a {
+    color: #00063d;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose-doc a:hover { color: #fa4028; }
+  .prose-doc code {
+    background: #f2f2f3;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875em;
+  }
+
+
+  /* ── Live demo: shield button and the keyframe the real panel animates with
+     Ported from extension/styles/shield.css. Only the button and the
+     tosly-slide-up keyframe are needed; the rest of that file styles the
+     extension's own root container. Prefixed `tosly-demo-` so it cannot
+     collide with the extension if both are ever on one page. */
+  .tosly-demo-shield {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: rgba(10, 10, 12, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px 10px 7px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  }
+  .tosly-demo-shield:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  .tosly-demo-shield:active { transform: translateY(0); }
+  .tosly-demo-shield.red {
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15), 0 0 0 1px rgba(239, 68, 68, 0.08) inset;
+  }
+  .tosly-demo-label {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: rgba(239, 68, 68, 0.8);
+    text-transform: uppercase;
+  }
+
+  @keyframes tosly-slide-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Marker highlight behind monospace eyebrows ───────────────────────── */
+  .marker {
+    display: inline-block;
+    padding: 0.15em 0.45em;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Buttons: zero radius, 46px tall, exactly as measured ────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.875rem;
+    padding-inline: 1.25rem;
+    border: 1px solid transparent;
+    border-radius: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  }
+  .btn-flame   { background: #fa4028; color: #fff; }
+  .btn-flame:hover   { background: #801a10; }
+  .btn-navy    { background: #00063d; color: #fff; }
+  .btn-navy:hover    { background: #0011a7; }
+  .btn-outline { background: transparent; color: #00063d; border-color: #00063d; }
+  .btn-outline:hover { background: #00063d; color: #fff; }
+
+  /* Inline arrow link */
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .arrow-link svg { transition: transform 0.18s ease; }
+  .arrow-link:hover svg { transform: translateX(3px); }
+
+  /* ── Single-hue product mockup: flattens a whole UI into one colour,
+        the trick behind Jasper's tinted screenshots. ───────────────────── */
+  .mock {
+    --mock-ink: #801a10;
+    --mock-line: rgba(250, 64, 40, 0.38);
+    --mock-fill: rgba(250, 64, 40, 0.16);
+    --mock-bg: #fff7f5;
+    background: var(--mock-bg);
+    border: 1px solid var(--mock-line);
+    color: var(--mock-ink);
+  }
+  .mock-flame { --mock-ink: #801a10; --mock-line: rgba(250,64,40,.38); --mock-fill: rgba(250,64,40,.16); --mock-bg: #fff7f5; }
+  .mock-lime  { --mock-ink: #103a00; --mock-line: rgba(32,122,0,.38);  --mock-fill: rgba(69,255,0,.20);  --mock-bg: #f4ffee; }
+  .mock-azure { --mock-ink: #0011a7; --mock-line: rgba(0,67,211,.34);  --mock-fill: rgba(0,149,255,.16); --mock-bg: #f2faff; }
+  .mock-sun   { --mock-ink: #7a7400; --mock-line: rgba(166,159,0,.36); --mock-fill: rgba(255,241,51,.28); --mock-bg: #fffdf0; }
+  .mock-iris  { --mock-ink: #391e7e; --mock-line: rgba(124,90,196,.36);--mock-fill: rgba(181,169,227,.28);--mock-bg: #f7f5fd; }
+
+  .mock-bar  { background: var(--mock-fill); }
+  .mock-rule { border-color: var(--mock-line); }
+
+  /* Skeleton text lines inside mockups */
+  .mock-line {
+    height: 0.5rem;
+    background: var(--mock-fill);
+  }
+
+  /* ── Accordion ────────────────────────────────────────────────────────── */
+  .acc-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.34s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .acc-panel > * { overflow: hidden; }
+  [data-open='true'] .acc-panel { grid-template-rows: 1fr; }
+  [data-open='true'] .acc-chevron { transform: rotate(180deg); }
+  .acc-chevron { transition: transform 0.28s ease; }
+
+  /* ── Marquee ──────────────────────────────────────────────────────────── */
+  .marquee { overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+  .marquee-track { display: flex; width: max-content; animation: marquee-scroll 42s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  @keyframes marquee-scroll { to { transform: translateX(-50%); } }
+
+  /* ── Reveal on scroll ─────────────────────────────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .reveal.is-in { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .acc-panel { transition: none; }
+}

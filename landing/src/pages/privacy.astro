@@ -1,64 +1,32 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import BackHeader from '../components/BackHeader.astro';
-import SiteFooter from '../components/SiteFooter.astro';
+import EditorialLayout from '../layouts/EditorialLayout.astro';
+import Nav from '../components/editorial/Nav.astro';
+import Footer from '../components/editorial/Footer.astro';
+import Eyebrow from '../components/editorial/Eyebrow.astro';
 
 const lastUpdated = '2026-05-07';
 ---
 
-<BaseLayout
+<EditorialLayout
   title="Privacy Policy - Tosly"
   description="Tosly's privacy policy. What data the Tosly Chrome extension processes, why, and what we don't do."
   canonical="https://tosly.online/privacy"
-  bodyClass="bg-surface text-ink min-h-screen"
 >
-  <style>
-    .prose h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-top: 3rem;
-      margin-bottom: 1rem;
-      color: #0a0a0c;
-    }
-    .prose h3 {
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 0.75rem;
-      color: #0a0a0c;
-    }
-    .prose p, .prose ul, .prose ol {
-      color: #374151;
-      line-height: 1.7;
-      margin-bottom: 1rem;
-    }
-    .prose ul, .prose ol {
-      padding-left: 1.5rem;
-    }
-    .prose li { margin-bottom: 0.5rem; }
-    .prose strong { color: #0a0a0c; font-weight: 600; }
-    .prose a { color: #0a0a0c; text-decoration: underline; text-underline-offset: 2px; }
-    .prose a:hover { color: #6b7280; }
-    .prose code {
-      background: #f0f0f5;
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.875em;
-    }
-  </style>
+  <Nav />
 
-  <BackHeader />
-
-  <main class="max-w-3xl mx-auto px-6 pb-24">
-
-    <section class="mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Privacy Policy</h1>
-      <p class="text-sm text-muted">Last updated: {lastUpdated}</p>
+  <main>
+    <section class="bg-paper-100 pt-sec pb-sec-sm">
+      <div class="shell">
+        <Eyebrow tone="flame" class="mb-5">Privacy</Eyebrow>
+        <h1 class="text-d1 text-navy max-w-[30rem]">Privacy Policy</h1>
+        <p class="mt-6 font-mono text-label text-navy/55">LAST UPDATED: {lastUpdated}</p>
+      </div>
     </section>
 
-    <article class="prose">
+    <section class="py-sec">
+      <div class="shell">
+        <article class="prose-doc max-w-[46rem]">
+
 
       <p>
         Tosly is a Chrome extension that reads Terms of Service and Privacy Policy pages and flags clauses that may harm the user. This document explains exactly what data the extension processes, why, and what we never do with it. We aim to be specific - vague privacy policies are how companies hide bad behavior, and Tosly exists to surface that behavior.
@@ -168,10 +136,10 @@ const lastUpdated = '2026-05-07';
       <p>
         Tosly provides useful signal for personal decisions about which services to use. <strong>It is not legal advice.</strong> For important contracts or legal disputes, consult a qualified attorney.
       </p>
-
-    </article>
-
+        </article>
+      </div>
+    </section>
   </main>
 
-  <SiteFooter variant="minimal" />
-</BaseLayout>
+  <Footer />
+</EditorialLayout>

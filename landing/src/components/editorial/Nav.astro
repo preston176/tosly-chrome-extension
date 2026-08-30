@@ -1,0 +1,88 @@
+---
+import ArrowRight from './ArrowRight.astro';
+
+const STORE = 'https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig';
+
+const links = [
+  { label: 'How it works', href: '#how-it-works' },
+  { label: 'Why Tosly',    href: '#why' },
+  { label: 'Use cases',    href: '#audiences' },
+  { label: 'FAQ',          href: '#faq' },
+];
+---
+
+<header class="sticky top-0 z-50 bg-white border-b border-navy/10">
+  <div class="shell">
+    <nav class="h-[4.5rem] flex items-center justify-between gap-6" aria-label="Main">
+      <!-- Wordmark -->
+      <a href="/" class="flex items-center gap-2.5 shrink-0">
+        <img src="/logo.png" alt="" width="30" height="30" class="w-[30px] h-[30px] object-contain" />
+        <span class="font-heading text-[1.65rem] leading-none text-flame-600 tracking-[-0.02em]">tosly</span>
+      </a>
+
+      <!-- Centre nav: flat, because every destination is a section on this page -->
+      <div class="hidden lg:flex items-center gap-1 text-copy">
+        {links.map((l) => (
+          <a href={l.href} class="px-3 py-2 text-navy hover:text-flame-600 transition-colors">{l.label}</a>
+        ))}
+      </div>
+
+      <!-- Right -->
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="/support" class="hidden sm:inline text-copy text-navy hover:text-flame-600 transition-colors">Support</a>
+        <a href={STORE} target="_blank" rel="noopener noreferrer" class="btn btn-flame hidden sm:inline-flex">
+          Add to Chrome
+        </a>
+
+        <button
+          id="nav-burger"
+          type="button"
+          class="lg:hidden w-11 h-11 grid place-items-center border border-navy/15 text-navy"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="nav-drawer"
+        >
+          <svg id="burger-open" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M2 5h14M2 9h14M2 13h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <svg id="burger-close" width="18" height="18" viewBox="0 0 18 18" fill="none" class="hidden" aria-hidden="true">
+            <path d="M3.5 3.5l11 11M14.5 3.5l-11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile drawer -->
+  <div id="nav-drawer" class="lg:hidden hidden border-t border-navy/10 bg-white">
+    <div class="shell py-4 flex flex-col">
+      {links.map((l) => (
+        <a href={l.href} class="nav-drawer-link py-3 text-lede text-navy border-b border-navy/8 last:border-0">{l.label}</a>
+      ))}
+      <a href={STORE} target="_blank" rel="noopener noreferrer" class="btn btn-flame mt-4 w-full">Add to Chrome, free</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const burger = document.getElementById('nav-burger');
+  const drawer = document.getElementById('nav-drawer');
+  const iOpen  = document.getElementById('burger-open');
+  const iClose = document.getElementById('burger-close');
+
+  const setOpen = (open: boolean) => {
+    drawer?.classList.toggle('hidden', !open);
+    iOpen?.classList.toggle('hidden', open);
+    iClose?.classList.toggle('hidden', !open);
+    burger?.setAttribute('aria-expanded', String(open));
+    burger?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+
+  burger?.addEventListener('click', () =>
+    setOpen(drawer?.classList.contains('hidden') ?? false)
+  );
+  drawer?.querySelectorAll('.nav-drawer-link').forEach((a) =>
+    a.addEventListener('click', () => setOpen(false))
+  );
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+</script>

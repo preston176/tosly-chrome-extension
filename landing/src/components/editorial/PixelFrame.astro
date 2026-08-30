@@ -1,0 +1,74 @@
+---
+/*
+  Stepped "pixel blob" frame: a flat pastel sheet with an irregular knockout in
+  the middle for content. Rendered as one SVG so the stepped blocks merge into a
+  single silhouette with no seams where they meet.
+
+  The SVG stretches to the container (preserveAspectRatio="none") and sits
+  behind content that flows normally, so the cavity always tracks the real text
+  height instead of the content overflowing a fixed-ratio hole. Percentage
+  padding on the content keeps it inside the cavity at any width.
+
+  Board is 48 x 26 units. Blocks are [x, y, w, h]. The cavity caps at 26 units
+  wide against a 42-unit shell, keeping the ring at least 4 units thick
+  everywhere; its rows overlap so the white area is one contiguous region rather
+  than bands cutting across the sheet.
+
+  Below md the frame is dropped for a plain colour field: at phone widths the
+  cavity is narrower than the headline, so a knockout would clip the text.
+*/
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+
+const shell = [
+  [11,  0, 26,  2],
+  [ 8,  2, 32,  3],
+  [ 5,  5, 38,  4],
+  [ 3,  9, 42,  5],
+  [ 5, 14, 39,  4],
+  [ 8, 18, 33,  3],
+  [12, 21, 26,  3],
+  [16, 24, 18,  2],
+];
+
+const cavity = [
+  [17,  3, 14,  2],
+  [14,  5, 20,  3],
+  [12,  8, 24,  3],
+  [11, 11, 26,  5],
+  [13, 16, 22,  3],
+  [16, 19, 16,  3],
+  [19, 22, 10,  1],
+];
+
+const CELL = 16;
+const W = 48 * CELL;
+const H = 26 * CELL;
+---
+<div class={`relative ${cls}`}>
+  <!-- md and up: stepped frame -->
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    preserveAspectRatio="none"
+    class="hidden md:block absolute inset-0 w-full h-full"
+    aria-hidden="true"
+  >
+    {shell.map(([x, y, w, h]) => (
+      <rect x={x * CELL} y={y * CELL} width={w * CELL} height={h * CELL} fill="#d2ffc1" />
+    ))}
+    {cavity.map(([x, y, w, h]) => (
+      <rect x={x * CELL} y={y * CELL} width={w * CELL} height={h * CELL} fill="#fff" />
+    ))}
+  </svg>
+
+  <!-- below md: plain colour field, stepped top and bottom edge -->
+  <div
+    class="md:hidden absolute inset-0 bg-lime-300
+           [clip-path:polygon(0_8%,22%_8%,22%_0,78%_0,78%_8%,100%_8%,100%_92%,78%_92%,78%_100%,22%_100%,22%_92%,0_92%)]"
+  ></div>
+
+  <!-- Content: percentage padding keeps it inside the cavity at any width -->
+  <div class="relative px-7 py-14 md:px-[24%] md:py-[13%] text-center flex flex-col items-center">
+    <slot />
+  </div>
+</div>

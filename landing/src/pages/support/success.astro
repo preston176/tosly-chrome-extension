@@ -1,55 +1,50 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import BackHeader from '../../components/BackHeader.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
+import EditorialLayout from '../../layouts/EditorialLayout.astro';
+import Nav from '../../components/editorial/Nav.astro';
+import Footer from '../../components/editorial/Footer.astro';
+import Eyebrow from '../../components/editorial/Eyebrow.astro';
+import Btn from '../../components/editorial/Btn.astro';
 ---
 
-<BaseLayout
+<EditorialLayout
   title="Message sent - Tosly"
   description="Thanks for reaching out. We'll get back to you shortly."
-  noIndex
-  bodyClass="bg-surface text-ink min-h-screen flex flex-col"
+  noIndex={true}
 >
-  <BackHeader />
+  <Nav />
 
-  <main class="flex-1 max-w-3xl mx-auto px-6 pb-24 w-full flex items-center justify-center">
+  <main class="min-h-[62vh] grid place-items-center py-sec">
+    <div class="shell">
+      <div class="max-w-[34rem]">
+        <div class="w-12 h-12 grid place-items-center bg-lime-600 text-navy mb-7">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
 
-    <div class="text-center max-w-xl">
-      <div class="mx-auto mb-8 w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center">
-        <svg class="w-8 h-8 text-[#16a34a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+        <Eyebrow tone="lime" class="mb-5">Sent</Eyebrow>
+        <h1 class="text-d1 text-navy">Message received</h1>
+
+        <p class="mt-6 text-lede text-navy/75">
+          Thanks for reaching out. We read every message and reply within 24 hours.
+          Check the inbox of the address you submitted, the reply will come from there.
+        </p>
+
+        <div class="mt-9 flex flex-wrap gap-3">
+          <Btn href="/" variant="navy">Back to home</Btn>
+          <Btn href="/support" variant="outline">Send another message</Btn>
+        </div>
+
+        <p class="mt-12 text-fine text-navy/55">
+          Reporting something urgent? You can also
+          <a
+            href="https://github.com/preston176/tosly-chrome-extension/issues/new"
+            class="underline underline-offset-2 hover:text-flame-600 transition-colors"
+          >open a GitHub issue</a>.
+        </p>
       </div>
-
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Message received</h1>
-
-      <p class="text-lg text-muted leading-relaxed mb-10">
-        Thanks for reaching out. We read every message and reply within 24 hours.
-        Check the inbox of the email address you submitted - the reply will come from there.
-      </p>
-
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a
-          href="/"
-          class="inline-flex items-center justify-center gap-2 bg-ink text-white rounded-full px-6 py-3 text-sm font-semibold hover:bg-ink-soft transition-colors"
-        >
-          Back to home
-        </a>
-        <a
-          href="/support"
-          class="inline-flex items-center justify-center gap-2 text-sm font-semibold text-ink px-6 py-3 hover:underline"
-        >
-          Send another message
-        </a>
-      </div>
-
-      <p class="text-xs text-muted mt-12">
-        Reporting something urgent? You can also
-        <a href="https://github.com/preston176/tosly-chrome-extension/issues/new" class="underline hover:text-ink">open a GitHub issue</a>.
-      </p>
     </div>
-
   </main>
 
-  <SiteFooter variant="minimal" />
-</BaseLayout>
+  <Footer />
+</EditorialLayout>

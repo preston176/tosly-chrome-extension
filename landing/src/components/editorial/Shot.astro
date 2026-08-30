@@ -1,0 +1,45 @@
+---
+/*
+  Frames a real product screenshot inside the flat editorial system.
+
+  Tosly's actual UI is dark, rounded and glassy, which fights a light
+  hard-edged page. Matting the screenshot on a flat pastel block and giving it a
+  square 1px border lets the frame carry the page's language while the
+  screenshot stays honest, rather than redrawing the product to match.
+*/
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  tone?: 'flame' | 'lime' | 'azure' | 'sun' | 'rose' | 'iris';
+  caption?: string;
+  class?: string;
+  eager?: boolean;
+}
+const {
+  src, alt, width, height,
+  tone = 'flame', caption, class: cls = '', eager = false,
+} = Astro.props;
+
+const mats: Record<string, string> = {
+  flame: 'bg-flame-300', lime: 'bg-lime-300', azure: 'bg-azure-300',
+  sun: 'bg-sun-400', rose: 'bg-rose-400', iris: 'bg-iris-400',
+};
+---
+<figure class={cls}>
+  <div class={`${mats[tone]} p-3 sm:p-5`}>
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      class="w-full h-auto block border border-navy/20 shadow-[0_18px_44px_-18px_rgba(0,6,61,0.35)]"
+    />
+  </div>
+  {caption && (
+    <figcaption class="mt-2.5 font-mono text-label text-navy/50">{caption}</figcaption>
+  )}
+</figure>

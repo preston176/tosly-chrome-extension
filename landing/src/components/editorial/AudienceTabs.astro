@@ -1,0 +1,118 @@
+---
+export interface Audience {
+  tab: string;
+  title: string;
+  body: string;
+  bullets: string[];
+  tone: 'flame' | 'lime' | 'azure' | 'sun' | 'rose' | 'iris';
+  specimen: { tier: string; category: string; text: string };
+}
+
+interface Props { items: Audience[] }
+const { items } = Astro.props;
+
+const panelBg: Record<string, string> = {
+  flame: 'bg-flame-200', lime: 'bg-lime-300', azure: 'bg-azure-300',
+  sun: 'bg-sun-400', rose: 'bg-rose-400', iris: 'bg-iris-400',
+};
+/* One step deeper than panelBg so the two halves read as separate blocks. */
+const matBg: Record<string, string> = {
+  flame: 'bg-flame-300', lime: 'bg-lime-400', azure: 'bg-azure-400',
+  sun: 'bg-sun-600', rose: 'bg-rose-500', iris: 'bg-iris-500',
+};
+const tierStyle: Record<string, string> = {
+  'HIGH RISK': 'bg-flame-600 text-white',
+  'CAUTION':   'bg-sun-700 text-navy',
+  'CLEAR':     'bg-lime-600 text-navy',
+};
+---
+
+<div data-tabs>
+  <!-- Tab chips -->
+  <div class="flex flex-wrap justify-center gap-2" role="tablist" aria-label="Use cases">
+    {items.map((it, i) => (
+      <button
+        type="button"
+        role="tab"
+        data-tab-btn
+        data-index={i}
+        id={`tab-${i}`}
+        aria-controls={`panel-${i}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        class:list={[
+          'px-3.5 py-2 text-fine font-medium transition-colors',
+          i === 0 ? 'bg-lime-600 text-navy' : 'bg-paper-100 text-navy/70 hover:bg-paper-200',
+        ]}
+      >
+        {it.tab}
+      </button>
+    ))}
+  </div>
+
+  <!-- Panels -->
+  <div class="mt-10">
+    {items.map((it, i) => (
+      <div
+        role="tabpanel"
+        id={`panel-${i}`}
+        aria-labelledby={`tab-${i}`}
+        data-tab-panel
+        data-index={i}
+        class:list={[i === 0 ? 'block' : 'hidden']}
+      >
+        <div class="grid md:grid-cols-2">
+          <div class={`${panelBg[it.tone]} p-7 sm:p-10 flex flex-col justify-between min-h-[19rem]`}>
+            <div>
+              <h3 class="text-d3 text-navy max-w-[22rem]">{it.title}</h3>
+              <p class="mt-4 text-copy text-navy/75 max-w-[26rem]">{it.body}</p>
+            </div>
+            <ul class="mt-7 space-y-2">
+              {it.bullets.map((b) => (
+                <li class="flex items-start gap-2.5 text-fine text-navy/80">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none" class="mt-[3px] shrink-0" aria-hidden="true">
+                    <path d="M2 7.4l3.2 3.2L12 3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- A clause this audience actually runs into, rather than a decorative panel -->
+          <div class={`${matBg[it.tone]} min-h-[14rem] md:min-h-0 relative`}>
+            <div class="absolute inset-0 grid place-items-center p-6 sm:p-10">
+              <div class="bg-white border border-navy/12 p-5 max-w-[24rem] shadow-[0_16px_44px_-18px_rgba(0,6,61,0.28)]">
+                <div class="flex items-center gap-2.5 mb-3">
+                  <span class={`marker !text-[0.65rem] ${tierStyle[it.specimen.tier]}`}>{it.specimen.tier}</span>
+                  <span class="font-mono text-label text-navy/50">{it.specimen.category}</span>
+                </div>
+                <p class="font-heading text-d4 text-navy">&ldquo;{it.specimen.text}&rdquo;</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+    const btns   = [...root.querySelectorAll<HTMLElement>('[data-tab-btn]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-tab-panel]')];
+
+    const activate = (index: number) => {
+      btns.forEach((b) => {
+        const on = b.dataset.index === String(index);
+        b.setAttribute('aria-selected', String(on));
+        b.classList.toggle('bg-lime-600', on);
+        b.classList.toggle('bg-paper-100', !on);
+        b.classList.toggle('text-navy/70', !on);
+        b.classList.toggle('hover:bg-paper-200', !on);
+      });
+      panels.forEach((p) => p.classList.toggle('hidden', p.dataset.index !== String(index)));
+    };
+
+    btns.forEach((b) => b.addEventListener('click', () => activate(Number(b.dataset.index))));
+  });
+</script>

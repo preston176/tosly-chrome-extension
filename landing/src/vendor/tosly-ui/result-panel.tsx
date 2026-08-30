@@ -1,5 +1,9 @@
+/* GENERATED FILE, DO NOT EDIT.
+ * Copied from extension/components/result-panel.tsx by landing/scripts/sync-extension-ui.mjs
+ * Edit the extension source, then run: bun run sync-ui
+ */
 import { useState } from "react"
-import type { AnalysisResult, Flag, Severity } from "~types"
+import type { AnalysisResult, Flag, Severity } from "./types"
 
 const SEVERITY_CONFIG = {
   red: {

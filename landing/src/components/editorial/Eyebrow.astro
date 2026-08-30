@@ -1,0 +1,19 @@
+---
+/* Monospace section label on a highlighter fill. */
+interface Props {
+  tone?: 'flame' | 'lime' | 'sun' | 'azure' | 'rose' | 'iris' | 'plain';
+  class?: string;
+}
+const { tone = 'flame', class: cls = '' } = Astro.props;
+
+const tones: Record<string, string> = {
+  flame: 'bg-flame-300 text-flame-700',
+  lime:  'bg-lime-400 text-lime-800',
+  sun:   'bg-sun-600 text-navy',
+  azure: 'bg-azure-300 text-azure-700',
+  rose:  'bg-rose-400 text-rose-800',
+  iris:  'bg-iris-400 text-iris-700',
+  plain: 'bg-paper-100 text-navy',
+};
+---
+<span class={`marker ${tones[tone]} ${cls}`}><slot /></span>
