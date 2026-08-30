@@ -13,6 +13,7 @@ import FaqList from '../components/editorial/FaqList.astro';
 import Shot from '../components/editorial/Shot.astro';
 import VideoFacade from '../components/editorial/VideoFacade.astro';
 import MockPrivacy from '../components/editorial/mock/MockPrivacy.astro';
+import LiveDemo from '../components/demo/LiveDemo.tsx';
 
 const STORE = 'https://chromewebstore.google.com/detail/tosly/gnnaglpijpngbbpamicaifonnkjbicig';
 const REPO  = 'https://github.com/preston176/tosly-chrome-extension';
@@ -382,6 +383,28 @@ const faqs = [
             </a>
           ))}
         </div>
+      </div>
+    </section>
+
+    <!-- ══ Live demo ══════════════════════════════════════════════════════ -->
+    <section id="demo" class="py-sec bg-paper-50">
+      <div class="shell">
+        <SectionHead
+          eyebrow="Try it"
+          tone="lime"
+          class="reveal"
+          lede="This is the extension&rsquo;s own interface, not a picture of it. Click any flag and the clause it came from lights up in the document, exactly as it would on a real page."
+        >
+          The actual panel, running here
+        </SectionHead>
+
+        <div class="mt-14 reveal max-w-[62rem] mx-auto">
+          <LiveDemo client:visible />
+        </div>
+
+        <p class="mt-5 text-center font-mono text-label text-navy/45">
+          SAMPLE DOCUMENT / REAL EXTENSION UI
+        </p>
       </div>
     </section>
 
