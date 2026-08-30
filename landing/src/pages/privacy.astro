@@ -4,7 +4,7 @@ import Nav from '../components/editorial/Nav.astro';
 import Footer from '../components/editorial/Footer.astro';
 import Eyebrow from '../components/editorial/Eyebrow.astro';
 
-const lastUpdated = '2026-05-07';
+const lastUpdated = '2026-08-30';
 ---
 
 <EditorialLayout
@@ -33,7 +33,8 @@ const lastUpdated = '2026-05-07';
       </p>
 
       <p>
-        <strong>The short version:</strong> Tosly only processes the visible text and URL of the page you're actively viewing, only when that page is identified as a Terms of Service or Privacy Policy. We do not require an account, do not track you across sites, and do not sell or share data with advertisers.
+        <strong>The short version:</strong> Tosly only processes the visible text and URL of the page you're actively viewing, only when that page is identified as a Terms of Service or Privacy Policy. We do not require an account, do not track you across sites, and do not sell or share data with advertisers. The tosly.online website counts
+        page views with Google Analytics - section 5 covers exactly what that collects.
       </p>
 
       <h2>1. What data we process</h2>
@@ -85,10 +86,30 @@ const lastUpdated = '2026-05-07';
         <li>We do not use the data for purposes unrelated to providing the analysis service (for example: building user profiles, training our own models, or marketing).</li>
         <li>We do not use the data to determine creditworthiness or for lending purposes.</li>
         <li>We do not require an account, login, or any form of identification to use the extension.</li>
-        <li>We do not use cookies or fingerprinting to track users across sessions.</li>
+        <li>The extension does not use cookies or fingerprinting to track users across sessions.</li>
       </ul>
 
-      <h2>5. Local storage on your device</h2>
+      <h2>5. The Tosly website</h2>
+
+      <p>Everything above describes the <strong>extension</strong>. The website at tosly.online is separate, and it differs in one respect: it uses Google Analytics 4 to count visitors, so we can tell whether anyone is finding the site.</p>
+
+      <p>On the website only, Google Analytics sets cookies in your browser (named <code>_ga</code> and <code>_ga_*</code>) and reports to us:</p>
+
+      <ul>
+        <li>Which pages were viewed, and how long the visit lasted.</li>
+        <li>Approximate location - country, region, and city, derived from your IP address. Google discards the IP address itself and does not pass it to us.</li>
+        <li>Device type, browser, operating system, and screen size.</li>
+        <li>Which site, search engine, or link referred you.</li>
+        <li>A few on-page interactions that Google's "enhanced measurement" records by default: how far down a page you scrolled, clicks on links leading off the site, and file downloads.</li>
+      </ul>
+
+      <p>This is aggregate traffic measurement, not per-person tracking. We see counts and trends; we never see your name, email address, or any other identifier, and we do not attempt to work out who an individual visitor is. Google processes this data under their own privacy policy at <a href="https://policies.google.com/privacy" rel="noopener">https://policies.google.com/privacy</a>. We have not enabled Google's advertising or cross-site features, so this data is not used to build an ad profile of you.</p>
+
+      <p><strong>The extension does none of this.</strong> It does not load Google Analytics, sets no cookies, and reports nothing about which pages you visit. Sections 1 through 4 are unchanged.</p>
+
+      <p>To opt out, use your browser's tracking protection or any content blocker, or install Google's official opt-out add-on at <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">tools.google.com/dlpage/gaoptout</a>. Nothing on the site depends on analytics - blocking it costs you nothing.</p>
+
+      <h2>6. Local storage on your device</h2>
 
       <p>The extension uses Chrome's local storage API to remember your preferences <strong>on your device only</strong>. Specifically:</p>
 
@@ -99,28 +120,28 @@ const lastUpdated = '2026-05-07';
 
       <p>This data never leaves your browser. Uninstalling the extension removes it.</p>
 
-      <h2>6. Permissions</h2>
+      <h2>7. Permissions</h2>
 
       <p>The extension requests the following Chrome permissions:</p>
 
       <ul>
-        <li><code>storage</code> - to save your local preferences (see section 5).</li>
+        <li><code>storage</code> - to save your local preferences (see section 6).</li>
         <li><code>host_permissions: &lt;all_urls&gt;</code> - because a legal document can be hosted on any domain. The extension only acts on pages identified as legal documents.</li>
       </ul>
 
-      <h2>7. Children</h2>
+      <h2>8. Children</h2>
 
       <p>Tosly is not directed at children under 13 and does not knowingly collect data from them.</p>
 
-      <h2>8. Your rights</h2>
+      <h2>9. Your rights</h2>
 
-      <p>Because Tosly does not store personal information about you, there is generally nothing to access, correct, or delete. If you believe we hold data about you and would like to make a request, contact us through the support page below.</p>
+      <p>Because Tosly does not store personal information about you - the website analytics in section 5 are aggregate and not tied to your identity - there is generally nothing to access, correct, or delete. If you believe we hold data about you and would like to make a request, contact us through the support page below.</p>
 
-      <h2>9. Changes to this policy</h2>
+      <h2>10. Changes to this policy</h2>
 
       <p>We may update this policy as the extension evolves. The "Last updated" date at the top reflects the most recent change. Significant changes - for example, adding a new category of data collection or changing LLM providers - will be communicated through the extension and the project repository.</p>
 
-      <h2>10. Contact</h2>
+      <h2>11. Contact</h2>
 
       <p>
         Questions about this policy or how Tosly handles your data:
@@ -131,7 +152,7 @@ const lastUpdated = '2026-05-07';
         <li>GitHub issues: <a href="https://github.com/preston176/tosly-chrome-extension/issues" rel="noopener">github.com/preston176/tosly-chrome-extension</a></li>
       </ul>
 
-      <h2>11. Disclaimer</h2>
+      <h2>12. Disclaimer</h2>
 
       <p>
         Tosly provides useful signal for personal decisions about which services to use. <strong>It is not legal advice.</strong> For important contracts or legal disputes, consult a qualified attorney.
