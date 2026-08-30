@@ -1,12 +1,42 @@
 name: Extension Release
 
+# Auto-releases the extension. On every push to main that touches extension
+# source, the patch version is bumped, the extension is built and packaged, and
+# the zip is attached to a GitHub Release.
+#
+# Versioning is owned by this job alone. Local and PR builds never bump, so
+# `npm run build` stays reproducible and concurrent PRs cannot race for a
+# version number.
+#
+# Loop safety: the bump is pushed with GITHUB_TOKEN, and GitHub does not trigger
+# workflows for pushes made with that token, so this cannot re-trigger itself.
+# The commit-message guard below is a second line of defence in case the push is
+# ever switched to a PAT.
+
 on:
   push:
-    tags:
-      - 'extension-v*'
+    branches:
+      - main
+    paths:
+      - 'extension/**'
+      - '!extension/**/*.md'
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump to apply'
+        required: true
+        default: 'patch'
+        type: choice
+        options: [patch, minor, major]
+
+concurrency:
+  # Never let two releases mint versions at the same time.
+  group: extension-release
+  cancel-in-progress: false
 
 jobs:
   release:
+    if: "!contains(github.event.head_commit.message, '[skip release]')"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -21,6 +51,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -32,6 +64,18 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Bump version
+        id: version
+        run: |
+          BUMP="${{ github.event.inputs.bump || 'patch' }}"
+          PREV=$(node -p "require('./package.json').version")
+          # --no-git-tag-version: this job creates the tag itself, after building.
+          npm version "$BUMP" --no-git-tag-version
+          NEXT=$(node -p "require('./package.json').version")
+          echo "previous=$PREV" >> $GITHUB_OUTPUT
+          echo "version=$NEXT"  >> $GITHUB_OUTPUT
+          echo "Bumped $PREV -> $NEXT ($BUMP)"
+
       - name: Build extension (production)
         # Backend URL comes from the committed extension/.env.production
         run: npm run build
@@ -39,23 +83,53 @@ jobs:
       - name: Package extension
         run: npm run package
 
-      - name: Extract version from tag
-        id: version
-        run: echo "version=${GITHUB_REF_NAME#extension-v}" >> $GITHUB_OUTPUT
+      - name: Verify the built manifest carries the new version
+        run: |
+          MANIFEST=$(node -p "require('./build/chrome-mv3-prod/manifest.json').version")
+          if [ "$MANIFEST" != "${{ steps.version.outputs.version }}" ]; then
+            echo "manifest version $MANIFEST does not match ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+          echo "manifest version: $MANIFEST"
+
+      - name: Guard against shipping a dev backend URL
+        run: |
+          if grep -rq 'localhost' build/chrome-mv3-prod/*.js build/chrome-mv3-prod/static 2>/dev/null; then
+            echo "refusing to release: a bundle references localhost"
+            grep -rl 'localhost' build/chrome-mv3-prod/*.js build/chrome-mv3-prod/static || true
+            exit 1
+          fi
+          echo "no localhost references in bundles"
 
       - name: Rename zip with version
         run: mv build/chrome-mv3-prod.zip build/tosly-${{ steps.version.outputs.version }}.zip
+
+      - name: Commit and tag the release
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add extension/package.json extension/package-lock.json
+          git commit -m "chore(extension): release v${{ steps.version.outputs.version }} [skip release]"
+          git tag "extension-v${{ steps.version.outputs.version }}"
+          git push origin HEAD:main
+          git push origin "extension-v${{ steps.version.outputs.version }}"
+        working-directory: .
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Tosly Extension ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref_name }}
+          tag_name: extension-v${{ steps.version.outputs.version }}
           generate_release_notes: true
           files: extension/build/tosly-${{ steps.version.outputs.version }}.zip
+          body: |
+            Chrome extension build for version ${{ steps.version.outputs.version }}
+            (bumped from ${{ steps.version.outputs.previous }}).
 
-      # Optional: auto-publish to Chrome Web Store
-      # Requires CWS_* secrets configured. Skipped if not set.
+            Download `tosly-${{ steps.version.outputs.version }}.zip` and load it
+            unpacked, or upload it to the Chrome Web Store.
+
+      # Only runs when the CWS_* secrets are configured; skipped otherwise.
       - name: Publish to Chrome Web Store
         if: env.CWS_EXTENSION_ID != ''
         run: |
