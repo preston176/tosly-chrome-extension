@@ -1,4 +1,5 @@
 import { Storage } from "@plasmohq/storage"
+import { isOwnHostname } from "~lib/domains"
 import type { AnalysisResult, Severity } from "~types"
 
 const storage = new Storage()
@@ -58,6 +59,7 @@ function extractText(): string {
 }
 
 function triggerScan() {
+  if (isOwnHostname(window.location.hostname)) return
   const text = extractText()
   if (!text) return
   chrome.runtime.sendMessage({
@@ -291,6 +293,9 @@ function clearHighlights() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 async function init() {
+  // Tosly never analyzes Tosly's own pages
+  if (isOwnHostname(window.location.hostname)) return
+
   const autoScan = await isAutoScanEnabled()
 
   if (autoScan && isTosPage()) {

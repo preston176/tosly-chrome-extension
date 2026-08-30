@@ -3,6 +3,7 @@ import { Storage } from "@plasmohq/storage"
 import type { PlasmoCSConfig, PlasmoGetShadowHostId } from "plasmo"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { isOwnHostname } from "~lib/domains"
 import type { AnalysisResult, ShieldState } from "~types"
 
 import ResultPanel from "~components/result-panel"
@@ -128,6 +129,8 @@ export default function ShieldUI() {
   })
 
   useEffect(() => {
+    // The shield never appears on Tosly's own pages
+    if (isOwnHostname(window.location.hostname)) return
     loadPos().then((p) => {
       setPos(p)
       setVisible(true)

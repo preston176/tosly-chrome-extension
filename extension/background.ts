@@ -1,4 +1,5 @@
 import { Storage } from "@plasmohq/storage"
+import { isOwnHostname } from "~lib/domains"
 import type { AnalysisResult } from "~types"
 
 const storage = new Storage()
@@ -62,6 +63,9 @@ chrome.runtime.onMessage.addListener((message, sender, _sendResponse) => {
   if (message.type === "ANALYZE") {
     const { url, text } = message.payload
     const domain = extractDomain(url)
+
+    // Backstop: never send Tosly's own pages to the analyzer
+    if (isOwnHostname(domain)) return
 
     ;(async () => {
       const tabId = sender.tab?.id
