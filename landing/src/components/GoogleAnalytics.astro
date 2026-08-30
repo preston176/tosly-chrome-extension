@@ -1,0 +1,30 @@
+---
+/*
+  Google Analytics 4 for tosly.online (property "Tosly Landing Page").
+
+  The measurement ID is public - it ships in the HTML of every page - so it
+  lives here instead of an env var. That keeps the tag working on any host
+  without extra dashboard config, which is how the tag went missing before.
+
+  The tag is only emitted in production builds, so `astro dev` sessions never
+  hit the property. To verify it locally, run `astro build && astro preview`.
+*/
+const measurementId = 'G-DR2JKX6793';
+---
+
+{import.meta.env.PROD && (
+  <Fragment>
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
+    <script define:vars={{ measurementId }}>
+      // define:vars wraps this in an IIFE, so gtag is scoped to it rather than
+      // global the way Google's stock snippet assumes. Hang it off window too,
+      // so a gtag('event', ...) call elsewhere on the page still resolves.
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', measurementId);
+    </script>
+  </Fragment>
+)}
