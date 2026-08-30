@@ -34,13 +34,14 @@ const systemPrompt = `You are a consumer protection legal analyst. Your job is t
 
 const userPromptTemplate = `Analyze the following Terms of Service or Privacy Policy text.
 
-Look specifically for issues in these 6 categories:
+Look specifically for issues in these 7 categories:
 1. Data Selling — selling or sharing user data with third parties for profit
 2. Hidden Fees — charges not prominently disclosed
 3. Forced Arbitration — clauses that prevent users from suing in court
 4. Auto-Renewal — subscriptions that renew without clear reminder
 5. Data Deletion Rights — how long data is kept after account closure
 6. Third-Party Sharing — data shared with partners or affiliates
+7. Prohibited Use — content or activity the provider forbids, where breaking the rule lets them suspend or terminate the account, often with no refund
 
 Severity guide:
 - red: directly harms the user or removes important rights
@@ -53,7 +54,7 @@ Return ONLY valid JSON in this exact format, no markdown, no code fences:
   "summary": "one sentence plain-English summary of the biggest concern",
   "flags": [
     {
-      "category": "one of the 6 categories above",
+      "category": "one of the 7 categories above",
       "severity": "red|yellow|green",
       "explanation": "one sentence, plain English, max 20 words",
       "quote": "the exact verbatim sentence or clause from the text that triggered this flag, max 200 chars"
