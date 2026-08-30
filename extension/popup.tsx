@@ -88,7 +88,7 @@ export default function Popup() {
       {/* Footer */}
       <footer className="popup-footer">
         <a
-          href="mailto:hello@tosly.app?subject=False+Positive+Report"
+          href="https://tosly.online/support"
           target="_blank"
           rel="noopener noreferrer"
           className="popup-footer-link">
