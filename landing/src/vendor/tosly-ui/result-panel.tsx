@@ -65,7 +65,6 @@ function FlagRow({
       style={{
         display: "flex",
         gap: 10,
-        padding: "10px 0",
         borderBottom: "1px solid rgba(255,255,255,0.05)",
         cursor: hasHighlight ? "pointer" : "default",
         borderRadius: 4,
